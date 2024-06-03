@@ -1,0 +1,212 @@
+import React, { useEffect, useState } from "react";
+import "./userProfile.css";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaHeart,
+  FaRegCreditCard,
+  FaRegEdit,
+  FaShoppingCart,
+  FaUser,
+  FaWindowRestore,
+} from "react-icons/fa";
+import { IoMdCloseCircle } from "react-icons/io";
+import { FaUserEdit } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "../../store/usersSlice";
+import logo1 from "../../assets/images/logo1.png";
+import Orders from "../Orders/Orders";
+import Bocket from "../bocket/Bocket";
+import UserAddress from "../user/UserAddress";
+import EditInfo from "../user/EditInfo";
+
+function UserProfile() {
+  const users = useSelector((state) => state.users);
+  const navigate = useNavigate();
+  const id = 1;
+  const [toggleNav, setToggleNav] = useState(0);
+  const [currentPage, setCurrentPage] = useState("favorite");
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case "editInfo":
+        return <EditInfo />;
+      case "favorite":
+        return null;
+      case "orders":
+        return <Orders />;
+      case "bocket":
+        return <Bocket />;
+      case "address":
+        return <UserAddress />;
+      default:
+        return null;
+    }
+  };
+
+  const handleLogout = () => {
+    navigate("/login");
+  };
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUsers(id));
+  }, []);
+
+  return (
+    <div className="user-profile">
+      <div className="user-container">
+        <div className="profile-pc">
+          <div className="user-info">
+            <div className="info-content">
+              <div className="user-info-name">
+                <div className="logo-pc">
+                  <img src={logo1} alt="" />
+                </div>
+                <div className="user-info-details">
+                  <span className="ms-1 fw-bold fs-3">{users.firstname}</span>
+                  <span className="fw-bold fs-3">{users.lastname}</span>
+                  <div className="user-ph text-center mb-2">
+                    <span>{users.phone}</span>
+                  </div>
+                  <div
+                    className="user-edit text-center"
+                    onClick={() => {
+                      setCurrentPage("editInfo");
+                      setToggleNav(-1);
+                    }}
+                  >
+                    <FaRegEdit className="text-dark m1-2" />
+                    <span>تعديل البيانات</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="logout-bu">
+              <div className="close" onClick={() => handleLogout()}>
+                <IoMdCloseCircle />
+              </div>
+            </div>
+          </div>
+          <div className="user-nav">
+            <div
+              className={
+                toggleNav === 0 ? "user-nav-item active" : "user-nav-item"
+              }
+              onClick={() => {
+                setToggleNav(0);
+                setCurrentPage("favorite");
+              }}
+            >
+              <span>المفضلة</span>
+              <FaHeart />
+            </div>
+            <div
+              className={
+                toggleNav === 1 ? "user-nav-item active" : "user-nav-item"
+              }
+              onClick={() => {
+                setToggleNav(1);
+                setCurrentPage("orders");
+              }}
+            >
+              <span>طلباتي</span>
+              <FaShoppingCart />
+            </div>
+            <div
+              className={
+                toggleNav === 2 ? "user-nav-item active" : "user-nav-item"
+              }
+              onClick={() => {
+                setToggleNav(2);
+                setCurrentPage("bocket");
+              }}
+            >
+              <span>المحفظة</span>
+              <FaRegCreditCard />
+            </div>
+            <div
+              className={
+                toggleNav === 3 ? "user-nav-item active" : "user-nav-item"
+              }
+              onClick={() => {
+                setToggleNav(3);
+                setCurrentPage("address");
+              }}
+            >
+              <span>عناوين الشحن</span>
+              <FaLocationDot />
+            </div>
+          </div>
+          <div className="user-content-page">{renderPage()}</div>
+        </div>
+        <div className="user-content">
+          <div className="sign-up mb-3">
+            <div className="close" onClick={() => handleLogout()}>
+              <IoMdCloseCircle />
+            </div>
+            <div className="user-icon">
+              <FaUser />
+              <div className="user-name d-flex">
+                <span className="me-1">{users.firstname}</span>
+                <span>{users.lastname}</span>
+              </div>
+            </div>
+          </div>
+          <div className="user-options">
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100" to="/profile/editInfo">
+                <FaUserEdit />
+                <span>تحرير معلومات الحساب</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <FaHeart />
+                <span>المفضلة</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <FaShoppingCart />
+                <span>طلباتي</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <FaRegCreditCard />
+                <span>المحفظة</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100" to="/profile/address">
+                <FaLocationDot />
+                <span>عناوين الشحن</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <FaWindowRestore />
+                <span>سياسة الشحن و الاسترجاع</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <FaWindowRestore />
+                <span>الشروط و الاحكام و سياسة الخصوصية</span>
+              </Link>
+            </div>
+            <div className="user-option-item">
+              <Link className="user-item d-flex w-100">
+                <span>TMGGL</span>
+                <span>عن تمقل</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default UserProfile;
