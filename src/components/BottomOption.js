@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { MdLocalShipping } from "react-icons/md";
+import { fetchShippingMethods } from "../store/shippingSlice";
 
 function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
   const [quantity, setQuantity] = useState(1);
@@ -80,6 +81,13 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
       confirmButtonText: "فهمت",
     });
   }
+  /* shipping method*/
+  const methods = useSelector((state) => state.shipping.methods);
+  useEffect(() => {
+    dispatch(fetchShippingMethods());
+  }, [dispatch]);
+  const enabledMethods = methods.filter((method) => method.enabled);
+  /* */
 
   return (
     <Fragment>
@@ -99,7 +107,11 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
           <div className="new-price me-4">
             <div className=" d-flex flex-column justify-content-center align-items-center">
               <MdLocalShipping className="fs-2" />
-              {/*<span className="free-shipping-text">شحن مجاني</span>*/}
+              {enabledMethods.price === 0 ? (
+                <span className="free-shipping-text">شحن مجاني</span>
+              ) : (
+                ""
+              )}
             </div>
             <div>
               <span className="ms-1">

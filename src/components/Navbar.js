@@ -15,10 +15,10 @@ function Navbar() {
           <Link className="nav-item">
             <span>الترند #</span>
           </Link>
-          <Link to="/" className="nav-item">
+          <Link to="/newest" className="nav-item">
             <span>المضاف حديثا</span>
           </Link>
-          <Link className="nav-item">
+          <Link to="/following" className="nav-item">
             <span>اتابعهم</span>
           </Link>
         </div>

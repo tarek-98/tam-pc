@@ -22,6 +22,13 @@
   display: none;
 }
 
+@media (min-width:768px) {
+  .search-home {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+}
+
 .search-home .search-container {
   display: flex;
   -webkit-box-align: center;

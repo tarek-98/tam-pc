@@ -20,13 +20,16 @@ import applePay from "../../assets/images/vat/Apple.png";
 import visa from "../../assets/images/vat/visa.png";
 import tappy from "../../assets/images/vat/tappy.webp";
 import { fetchShippingMethods } from "../../store/shippingSlice";
+import { fetchPaymentsMethods } from "../../store/tabbySlice";
 
 function Checkout() {
   const dispatch = useDispatch();
   const carts = useSelector(getAllCarts);
   const address = useSelector(getAllAddress);
   const defaultAddr = useSelector(getDefaultAddress);
-  const { discount, status, error } = useSelector((state) => state.cart);
+  const { discount, status, error, discountType } = useSelector(
+    (state) => state.cart
+  );
   const [couponCode, setCouponCode] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [shippingName, setShippingName] = useState("");
@@ -39,6 +42,14 @@ function Checkout() {
     }
   }, [status, dispatch]);
   const enabledMethods = methods.filter((method) => method.enabled);
+  /*payments */
+  const payments = useSelector((state) => state.payments.methods);
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchPaymentsMethods());
+    }
+  }, [status, dispatch]);
+  const enabledPayment = payments.filter((method) => method.enabled);
   /* */
 
   const handleApplyCoupon = () => {
@@ -94,7 +105,7 @@ function Checkout() {
     "https://gomla-wbs.el-programmer.com/storage/app/public/product";
 
   const VAT = CArtTotlaPrice * (15 / 100);
-  const Total = CArtTotlaPrice + +shippingPrice + VAT - discount;
+  const Total = CArtTotlaPrice + +shippingPrice + VAT;
   const Weight = CartWeight; //dynamic
 
   const handleDefaultAddress = (addr) => {
@@ -119,6 +130,13 @@ function Checkout() {
     setIsOpenShipping(!isOpenShipping);
     console.log(shippingPrice);
   };
+  let newDiscount = 0;
+  if (discountType === "percent") {
+    newDiscount = (Total * discount) / 100;
+  } else if (discountType === "flat") {
+    newDiscount = discount;
+  }
+  const TotalAfter = CArtTotlaPrice + +shippingPrice + VAT - newDiscount;
   return (
     <div className="home-cart">
       <div className="cart" dir="rtl">
@@ -157,7 +175,7 @@ function Checkout() {
                       <span>
                         {groupedItems[vendor].total +
                           groupedItems[vendor].total * 0.15 -
-                          discount}
+                          newDiscount}
                         ر.س
                       </span>
                       <div
@@ -247,7 +265,7 @@ function Checkout() {
                             تطبيق
                           </button>
                         </div>
-                        {discount > 0 && <h4>تم خصم {discount} ر.س</h4>}
+                        {discount > 0 && <h4>تم خصم {newDiscount} ر.س</h4>}
                         {status === "loading" && <p>Applying coupon...</p>}
                         {status === "failed" && <p>{error}</p>}
                       </div>
@@ -256,7 +274,7 @@ function Checkout() {
                 ))}
               </div>
             </div>
-            <div className="col-lg-6 total-box rounded-3 p-3 mb-3">
+            <div className="col-lg-6 total-box rounded-3 pt-3 mb-3">
               <div className="total-box-header d-flex justify-content-between align-items-center mb-3">
                 <h5>الملخص</h5>
               </div>
@@ -288,12 +306,12 @@ function Checkout() {
                     }
                   >
                     <span>الخصم </span>
-                    <span> - {discount} ر.س</span>
+                    <span> - {newDiscount} ر.س</span>
                   </div>
                   <div className="cart-total-item d-flex justify-content-between">
                     <span>الاجمالي النهائي</span>
                     <span className="cart-total-price">
-                      {Total.toFixed(2)} ر.س
+                      {TotalAfter.toFixed(2)} ر.س
                     </span>
                   </div>
                 </div>
@@ -322,15 +340,25 @@ function Checkout() {
                     </label>
                   </div>
                 </div>
-                <div className="item-pay">
-                  <div className="tappy-pay-logo">
-                    <img src={tappy} alt="" />
-                  </div>
-                  <div className="tappy-but">
-                    <input type="radio" name="payment" id="tappy-pay-input" />
-                    <label htmlFor="tappy-pay-input">الدفع باستخدام تابي</label>
-                  </div>
-                </div>
+                {enabledPayment.map((pay) => {
+                  return (
+                    <div className="item-pay">
+                      <div className="tappy-pay-logo">
+                        <img src={pay.image} alt="" />
+                      </div>
+                      <div className="tappy-but">
+                        <input
+                          type="radio"
+                          name="payment"
+                          id="tappy-pay-input"
+                        />
+                        <label htmlFor="tappy-pay-input">
+                          الدفع باستخدام تابي
+                        </label>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="cart-cfoot d-flex col-lg-12 me-auto ms-3">
                 <div className="cart-cfoot-l mb-3 d-flex justify-content-between">
@@ -424,7 +452,13 @@ function Checkout() {
                             <span className=""></span>
                           </span>
                           <div className="shipping-shipping w-100 d-flex justify-content-between align-items-center flex-row-reverse">
-                            <span>{method.name}</span>
+                            <span>
+                              {method.name}
+                              <br />
+                              <span className="text-black-50">
+                                {method.shippingDuration}
+                              </span>
+                            </span>
                             <span className="d-flex">
                               <span className="me-1">ر.س</span>
                               <span>{method.price}</span>

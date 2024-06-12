@@ -1,17 +1,20 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import "./product.css";
+import "../product.css";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAsyncProducts, getAllProducts } from "../store/productSlice";
-import SlideOverlay from "./SlideOverlay";
-import vid2 from "../videos/Download.mp4";
-import BottomOption from "./BottomOption";
+import SlideOverlay from "../SlideOverlay";
+import vid2 from "../../videos/Download.mp4";
+import BottomOption from "../BottomOption";
 import { Mousewheel } from "swiper/modules";
+import {
+  fetchAsyncNewestProducts,
+  getAllNewestProducts,
+} from "../../store/productSlice";
 
-function Product({ sound, comment, setComment }) {
+function NewestProduct({ sound, comment, setComment }) {
   const [addProduct, setAddProduct] = useState(false);
-  const products = useSelector(getAllProducts);
+  const products = useSelector(getAllNewestProducts);
   const [social, setSocial] = useState(false);
   const [info, setInfo] = useState(false);
   const dispatch = useDispatch();
@@ -20,7 +23,7 @@ function Product({ sound, comment, setComment }) {
   const [currentVideo, setCurrentVideo] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchAsyncProducts());
+    dispatch(fetchAsyncNewestProducts());
   }, []);
 
   /*timeLine*/
@@ -134,4 +137,4 @@ function Product({ sound, comment, setComment }) {
   );
 }
 
-export default Product;
+export default NewestProduct;

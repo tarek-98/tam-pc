@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./userProfile.css";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  FaGift,
   FaHeart,
   FaRegCreditCard,
   FaRegEdit,
@@ -9,7 +10,7 @@ import {
   FaUser,
   FaWindowRestore,
 } from "react-icons/fa";
-import { IoMdCloseCircle } from "react-icons/io";
+import { IoMdCloseCircle, IoMdCloseCircleOutline } from "react-icons/io";
 import { FaUserEdit } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,18 +20,21 @@ import Orders from "../Orders/Orders";
 import Bocket from "../bocket/Bocket";
 import UserAddress from "../user/UserAddress";
 import EditInfo from "../user/EditInfo";
+import { ToastContainer } from "react-bootstrap";
 
-function UserProfile() {
+function UserProfile({ socket }) {
   const users = useSelector((state) => state.users);
   const navigate = useNavigate();
   const id = 1;
   const [toggleNav, setToggleNav] = useState(0);
   const [currentPage, setCurrentPage] = useState("favorite");
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
 
   const renderPage = () => {
     switch (currentPage) {
-      case "editInfo":
-        return <EditInfo />;
       case "favorite":
         return null;
       case "orders":
@@ -51,6 +55,7 @@ function UserProfile() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchUsers(id));
+    document.title = "Profile";
   }, []);
 
   return (
@@ -64,18 +69,14 @@ function UserProfile() {
                   <img src={logo1} alt="" />
                 </div>
                 <div className="user-info-details">
-                  <span className="ms-1 fw-bold fs-3">{users.firstname}</span>
-                  <span className="fw-bold fs-3">{users.lastname}</span>
+                  <div className="d-flex flex-row-reverse align-items-center">
+                    <span className="ms-1 fw-bold fs-3">{users.firstname}</span>
+                    <span className="fw-bold fs-3">{users.lastname}</span>
+                  </div>
                   <div className="user-ph text-center mb-2">
                     <span>{users.phone}</span>
                   </div>
-                  <div
-                    className="user-edit text-center"
-                    onClick={() => {
-                      setCurrentPage("editInfo");
-                      setToggleNav(-1);
-                    }}
-                  >
+                  <div className="user-edit text-center" onClick={toggleModal}>
                     <FaRegEdit className="text-dark m1-2" />
                     <span>تعديل البيانات</span>
                   </div>
@@ -122,8 +123,8 @@ function UserProfile() {
                 setCurrentPage("bocket");
               }}
             >
-              <span>المحفظة</span>
-              <FaRegCreditCard />
+              <span>قسيمة هدايا</span>
+              <FaGift />
             </div>
             <div
               className={
@@ -139,6 +140,24 @@ function UserProfile() {
             </div>
           </div>
           <div className="user-content-page">{renderPage()}</div>
+          <div className="change-adddres">
+            <div className={`modal-overlay ${isOpen ? "open" : ""}`}>
+              <div className={`modal-change ${isOpen ? "open" : ""}`}>
+                <div className="close mb-3" onClick={toggleModal}>
+                  <IoMdCloseCircleOutline className="fs-3" />
+                </div>
+                <div className="ps-1 pe-1">
+                  <div className="d-flex justify-content-between align-items-center flex-row-reverse mb-3">
+                    <span>تعديل البيانات</span>
+                  </div>
+                  <div className="saved-address ms-auto">
+                    <EditInfo />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ToastContainer />
+          </div>
         </div>
         <div className="user-content">
           <div className="sign-up mb-3">
@@ -173,9 +192,9 @@ function UserProfile() {
               </Link>
             </div>
             <div className="user-option-item">
-              <Link className="user-item d-flex w-100">
-                <FaRegCreditCard />
-                <span>المحفظة</span>
+              <Link className="user-item d-flex w-100" to="/profile/gifts">
+                <FaGift />
+                <span>قسيمة هدايا</span>
               </Link>
             </div>
             <div className="user-option-item">

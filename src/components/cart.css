@@ -230,8 +230,8 @@
 
 @media (min-width:768px) {
   .home-cart {
-    padding-left: 100px;
-    padding-right: 50px;
+    padding-left: 50px;
+    padding-right: 25px;
   }
 }
 
@@ -633,4 +633,8 @@
   -moz-border-radius: 15px;
   -ms-border-radius: 15px;
   -o-border-radius: 15px;
+}
+
+.choose-shippong span {
+  font-size: 12px;
 }
