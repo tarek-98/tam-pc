@@ -69,7 +69,7 @@ const CartPage = () => {
         </div>
         <div className="cart-ctable">
           <div className="row">
-            <div className="col-lg-7">
+            <div className="col-lg-6">
               <div className="cart-chead">
                 {Object.keys(groupedItems).map((vendor) => (
                   <div key={vendor}>
@@ -171,11 +171,11 @@ const CartPage = () => {
                 ))}
               </div>
             </div>
-            <div className="col-lg-4 total-box rounded-3 p-3">
+            <div className="col-lg-6 total-box rounded-3 p-3">
               <div className="total-box-header d-flex justify-content-between align-items-center mb-3">
                 <h5>الملخص</h5>
               </div>
-              <div className="col">
+              <div className="col ps-2 pe-2">
                 <div className="cart-total d-flex flex-column justify-content-center gap-3">
                   <div className="cart-total-item d-flex justify-content-between">
                     <span>المجموع الفرعي</span>

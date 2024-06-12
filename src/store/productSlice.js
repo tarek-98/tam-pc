@@ -6,6 +6,8 @@ const initialState = {
   productsStatus: STATUS.IDLE,
   productSingle: [],
   productSingleStatus: STATUS.IDLE,
+  newestProducts: [],
+  newestProductsStatus: STATUS.IDLE,
 };
 
 const productSlice = createSlice({
@@ -38,6 +40,18 @@ const productSlice = createSlice({
 
       .addCase(fetchAsyncProductSingle.rejected, (state, action) => {
         state.productSingleStatus = STATUS.FAILED;
+      })
+      .addCase(fetchAsyncNewestProducts.pending, (state, action) => {
+        state.newestProductsStatus = STATUS.LOADING;
+      })
+
+      .addCase(fetchAsyncNewestProducts.fulfilled, (state, action) => {
+        state.newestProducts = action.payload;
+        state.newestProductsStatus = STATUS.SUCCEEDED;
+      })
+
+      .addCase(fetchAsyncNewestProducts.rejected, (state, action) => {
+        state.newestProductsStatus = STATUS.FAILED;
       });
   },
 });
@@ -45,6 +59,16 @@ const productSlice = createSlice({
 // for getting the products list with limited numbers
 export const fetchAsyncProducts = createAsyncThunk(
   "products/fetch",
+  async () => {
+    const response = await fetch(
+      "https://gomla-wbs.el-programmer.com/api/products/latest"
+    );
+    const data = await response.json();
+    return data.products;
+  }
+);
+export const fetchAsyncNewestProducts = createAsyncThunk(
+  "newestProducts/fetch",
   async () => {
     const response = await fetch(
       "https://gomla-wbs.el-programmer.com/api/products/latest"
@@ -65,6 +89,7 @@ export const fetchAsyncProductSingle = createAsyncThunk(
 );
 
 export const getAllProducts = (state) => state.product.products;
+export const getAllNewestProducts = (state) => state.product.newestProducts;
 export const getAllProductsStatus = (state) => state.product.productsStatus;
 export const getProductSingle = (state) => state.product.productSingle;
 export const getSingleProductStatus = (state) =>

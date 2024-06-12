@@ -15,6 +15,7 @@ export const applyCoupon = createAsyncThunk(
         coupon: couponCode,
         discount: response.data[0].discount,
         endDate: response.data[0].endDate,
+        discountType: response.data[0].discountType,
       };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -43,6 +44,7 @@ const initialState = {
   coupon: null,
   discount: 0,
   endDate: null,
+  discountType: null,
   status: "idle",
   error: null,
 };
@@ -149,6 +151,7 @@ const cartSlice = createSlice({
         state.status = "succeeded";
         state.coupon = action.payload.coupon;
         state.discount = action.payload.discount;
+        state.discountType = action.payload.discountType;
         state.endDate = action.payload.endDate;
         state.totalAmount -= action.payload.discount;
       })

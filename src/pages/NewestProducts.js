@@ -1,14 +1,14 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
-import Product from "../components/Product";
 import { FaVolumeXmark } from "react-icons/fa6";
 import { getAllComments } from "../store/commentSlice";
 import { useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import CommentList from "../components/comments/CommentList";
 import CommentForm from "../components/comments/CommentForm";
+import NewestProduct from "../components/products/NewestProduct";
 
-function Home() {
+function NewestProducts() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
   const [comment, setComment] = useState(false);
@@ -20,7 +20,7 @@ function Home() {
   return (
     <Fragment>
       <Navbar />
-      <Product sound={sound} comment={comment} setComment={setComment} />
+      <NewestProduct sound={sound} comment={comment} setComment={setComment} />
       <div className={volume ? "volume-hide" : "volume"}>
         <FaVolumeXmark
           className="text-white fw-bold"
@@ -53,4 +53,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default NewestProducts;

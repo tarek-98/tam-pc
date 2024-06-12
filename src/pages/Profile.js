@@ -5,7 +5,7 @@ import Verify from "../components/Verify";
 import "../components/login.css";
 import UserProfile from "../components/user/UserProfile";
 
-function Profile() {
+function Profile({ socket }) {
   const { showComp, success } = useSelector((state) => state.otp);
   const [isVerified, setIsVerified] = useState(false);
 
@@ -20,7 +20,7 @@ function Profile() {
           <UserProfile />
         )}
       </div>*/}
-      <UserProfile />
+      <UserProfile socket={socket} />
     </div>
   );
 }

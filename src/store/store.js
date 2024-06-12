@@ -14,6 +14,7 @@ import { loadState, saveState } from "../utils/localStorage";
 import locationReducer from "./locationSlice";
 import cartSlice from "./cartSlice";
 import shippingReducer from "./shippingSlice";
+import tabbySlice from "./tabbySlice";
 
 const preloadedState = loadState();
 
@@ -32,6 +33,7 @@ const store = configureStore({
     auth: authReducer,
     location: locationReducer,
     shipping: shippingReducer,
+    payments: tabbySlice,
   },
   preloadedState,
 });
