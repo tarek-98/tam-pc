@@ -1,80 +1,78 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
-const API_URL = "https://your-api-url.com";
+const API_URL = "https://tager.onrender.com";
 
-export const sendOtp = createAsyncThunk("auth/sendOtp", async (phoneNumber) => {
-  const response = await axios.post(`${API_URL}/send-otp`, { phoneNumber });
-  return response.data;
+// Thunks for sending OTP and verifying OTP
+export const sendOTP = createAsyncThunk("auth/sendOTP", async (phoneNumber) => {
+  const response = await fetch(`${API_URL}/send-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ phoneNumber }),
+  });
+  return response.json();
 });
 
-export const verifyOtp = createAsyncThunk(
-  "auth/verifyOtp",
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
   async ({ phoneNumber, otp }) => {
-    const response = await axios.post(`${API_URL}/verify-otp`, {
-      phoneNumber,
-      otp,
+    const response = await fetch(`${API_URL}/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ phoneNumber, otp }),
     });
-    return response.data;
-  }
-);
-
-export const fetchUserProfile = createAsyncThunk(
-  "auth/fetchUserProfile",
-  async (userId) => {
-    const response = await axios.get(`${API_URL}/users/${userId}`);
-    return response.data;
+    return response.json();
   }
 );
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    phoneNumber: "",
+    otp: "",
     status: "idle",
     error: null,
+    isNewUser: false,
+    userInfo: null,
   },
   reducers: {
-    logout: (state) => {
-      state.user = null;
+    setPhoneNumber: (state, action) => {
+      state.phoneNumber = action.payload;
+    },
+    setOtp: (state, action) => {
+      state.otp = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(sendOtp.pending, (state) => {
+      .addCase(sendOTP.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(sendOtp.fulfilled, (state) => {
-        state.status = "otpSent";
+      .addCase(sendOTP.fulfilled, (state, action) => {
+        state.status = "succeeded";
       })
-      .addCase(sendOtp.rejected, (state, action) => {
+      .addCase(sendOTP.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(verifyOtp.pending, (state) => {
+      .addCase(verifyOTP.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(verifyOtp.fulfilled, (state, action) => {
+      .addCase(verifyOTP.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload.user;
+        state.isNewUser = action.payload.isNewUser;
+        state.userInfo = action.payload.userInfo;
       })
-      .addCase(verifyOtp.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(fetchUserProfile.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.user = action.payload;
-      })
-      .addCase(fetchUserProfile.rejected, (state, action) => {
+      .addCase(verifyOTP.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { setPhoneNumber, setOtp } = authSlice.actions;
+
 export default authSlice.reducer;

@@ -11,7 +11,7 @@ const CommentForm = () => {
   const handleSubmit = (e) => {
     if (body === "") {
       e.preventDefault();
-      alert("Please enter a comment");
+      // alert("Please enter a comment");
     } else {
       e.preventDefault();
       const id = uuidv4();

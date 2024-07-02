@@ -18,7 +18,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import applePay from "../../assets/images/vat/Apple.png";
 import visa from "../../assets/images/vat/visa.png";
-import tappy from "../../assets/images/vat/tappy.webp";
 import { fetchShippingMethods } from "../../store/shippingSlice";
 import { fetchPaymentsMethods } from "../../store/tabbySlice";
 
@@ -148,7 +147,7 @@ function Checkout() {
             <div className="col-lg-6 mb-3">
               <div className="checkout-location mb-4 d-flex flex-column">
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <span className="fs-4 mb-2">عنوان التسليم</span>
+                  <span className="fs-4 mb-2">عنوان الشحن</span>
                   <span className="change-loc-bt" onClick={toggleModal}>
                     تغيير
                     <CiEdit className="me-1" />
@@ -313,6 +312,56 @@ function Checkout() {
                     <span className="cart-total-price">
                       {TotalAfter.toFixed(2)} ر.س
                     </span>
+                  </div>
+                  <div className="coupon-conatiner">
+                    <div className="coupon p-0">
+                      <input
+                        type="text"
+                        // value={couponCode}
+                        onChange={(e) => {
+                          e.target.value === ""
+                            ? setCouponCode(0)
+                            : setCouponCode(e.target.value);
+                        }}
+                        placeholder="ادخل الكوبون"
+                      />
+                      <button
+                        disabled={status === "loading"}
+                        onClick={() => {
+                          handleApplyCoupon();
+                        }}
+                      >
+                        تطبيق
+                      </button>
+                    </div>
+                    {discount > 0 && <h4>تم خصم {newDiscount} ر.س</h4>}
+                    {status === "loading" && <p>Applying coupon...</p>}
+                    {status === "failed" && <p>{error}</p>}
+                  </div>
+                  <div className="coupon-conatiner">
+                    <div className="coupon p-0">
+                      <input
+                        type="text"
+                        // value={couponCode}
+                        onChange={(e) => {
+                          e.target.value === ""
+                            ? setCouponCode(0)
+                            : setCouponCode(e.target.value);
+                        }}
+                        placeholder="ادخل قسيمة الهدايا"
+                      />
+                      <button
+                        disabled={status === "loading"}
+                        onClick={() => {
+                          handleApplyCoupon();
+                        }}
+                      >
+                        تطبيق
+                      </button>
+                    </div>
+                    {discount > 0 && <h4>تم خصم {newDiscount} ر.س</h4>}
+                    {status === "loading" && <p>Applying coupon...</p>}
+                    {status === "failed" && <p>{error}</p>}
                   </div>
                 </div>
               </div>

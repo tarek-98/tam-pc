@@ -1,21 +1,32 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendOtp } from "../../store/authSlice";
+import { sendOTP, setPhoneNumber } from "../../store/authSlice";
 import { useNavigate } from "react-router";
 import "./login.css";
 import logo from "../../assets/images/logo.jpeg";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authStatus = useSelector((state) => state.auth.status);
+  const { status, error } = useSelector((state) => state.auth);
+
+  const saudiPhoneNumberRegex = /^0[0-9]{9}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(sendOtp(phone));
-    if (authStatus === "otpSent") {
-      navigate.push("/verify-otp");
+    console.log(status);
+    if (saudiPhoneNumberRegex.test(phone)) {
+      dispatch(setPhoneNumber(phone));
+      dispatch(sendOTP(phone));
+      if (status === "succeeded") {
+        navigate("/verify-otp");
+      }
+    } else {
+      toast.error("ادخل رقم جوال صالح", {
+        position: "top-left",
+      });
     }
   };
 
@@ -49,6 +60,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

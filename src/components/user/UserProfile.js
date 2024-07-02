@@ -123,7 +123,7 @@ function UserProfile({ socket }) {
                 setCurrentPage("bocket");
               }}
             >
-              <span>قسيمة هدايا</span>
+              <span>ارسال قسيمة هدايا</span>
               <FaGift />
             </div>
             <div

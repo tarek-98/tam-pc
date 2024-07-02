@@ -45,6 +45,9 @@ function Product({ sound, comment, setComment }) {
     }
   };
 
+  const img_url =
+    "https://gomla-wbs.el-programmer.com/storage/app/public/product";
+
   return (
     <div className="video-card">
       <Swiper
@@ -94,6 +97,7 @@ function Product({ sound, comment, setComment }) {
                       <div className="plyer-container">
                         <div>
                           <video
+                            // poster={`${img_url}/${product.images[0]}`}
                             id={index}
                             src={vid2}
                             className="react-player"

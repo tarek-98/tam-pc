@@ -101,6 +101,7 @@
   background-color: red;
   border-radius: 50%;
   color: white;
+  cursor: pointer;
 }
 
 .left-side-content .follow-plus .icon-plus-hide {

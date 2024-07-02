@@ -52,10 +52,12 @@
   -o-border-radius: 30px;
   color: white;
   font-weight: bold;
-  padding: 20px;
+  padding: 15px 20px;
   text-align: center;
   margin-left: 5px;
+  cursor: pointer;
 }
+
 
 .bottomOption .old-price {
   color: var(--color-danger);
@@ -118,4 +120,38 @@
 .bottomOption .price .new-price .free-shipping-text {
   font-size: 9px;
   color: #AC3D00;
+}
+
+/**/
+/* VideoSwiper.css */
+
+
+.edit-modal {
+  background-color: white !important;
+}
+
+.css-79ws1d-MuiModal-root {
+  position: fixed;
+  z-index: 1300;
+  right: 0;
+  bottom: 0;
+  top: 139px;
+  left: 0;
+  height: 85%;
+}
+
+@media (min-width:768px) {
+  .edit-modal {
+    background-color: white !important;
+  }
+
+  .css-79ws1d-MuiModal-root {
+    position: fixed;
+    z-index: 1300;
+    right: 0;
+    bottom: 0;
+    top: 139px;
+    left: -100px;
+    height: 85%;
+  }
 }

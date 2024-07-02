@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { MdLocalShipping } from "react-icons/md";
 import { fetchShippingMethods } from "../store/shippingSlice";
+import { Box, Button, Modal, Typography } from "@mui/material";
 
 function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
   const [quantity, setQuantity] = useState(1);
@@ -92,17 +93,16 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
   return (
     <Fragment>
       <div className="bottomOption">
-        <div className="add-cart">
-          <span
-            className="fs-6"
-            onClick={() => {
-              setAddProduct(true);
-              setSocial(false);
-            }}
-          >
-            أضف للسلة
-          </span>
-        </div>
+        <Button
+          variant="contained"
+          className="add-cart"
+          onClick={() => {
+            setAddProduct(true);
+            setSocial(false);
+          }}
+        >
+          اضف للسلة
+        </Button>
         <div className="price">
           <div className="new-price me-4">
             <div className=" d-flex flex-column justify-content-center align-items-center">

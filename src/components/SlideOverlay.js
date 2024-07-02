@@ -8,7 +8,7 @@ import { RiChatForwardLine } from "react-icons/ri";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
 import { CiLink } from "react-icons/ci";
-import { fetchComments, getAllComments } from "../store/commentSlice";
+import { fetchComments } from "../store/commentSlice";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 function SlideOverlay({
@@ -23,7 +23,8 @@ function SlideOverlay({
   const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
   const [iconPlus, setIconPlus] = useState(true);
-  const comments = useSelector(getAllComments);
+  const comments = useSelector((state) => state.comments.comments);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   // Function to convert likes count to a number
   const parseLikesCount = (count) => {
@@ -48,6 +49,7 @@ function SlideOverlay({
     const newLikedState = !liked;
     setLiked(newLikedState);
     localStorage.setItem(`liked-${product.id}`, newLikedState);
+    console.log(isAuthenticated);
   };
   const handIconClick = () => {
     setIconPlus((prevIconPlus) => !prevIconPlus);
@@ -65,13 +67,21 @@ function SlideOverlay({
     }
   }, [product.id]);
 
+  function handleCheckLogin() {
+    if (isAuthenticated) {
+      handleLikeClick();
+    } else {
+      login();
+    }
+  }
+
   return (
     <div className="slide-overlay">
       <div className="container-wrapper">
         <div className="left-side">
           <div className="left-side-content">
             <div className="vendor-logo">
-              <Link className="vend-in"></Link>
+              <Link className="vend-in" to={`/vendorpage/${product.id}`}></Link>
               <div className="wrapper">
                 <div className="follow-plus">
                   <GoPlus
@@ -87,7 +97,7 @@ function SlideOverlay({
                   style={{
                     color: liked ? "#FF0000" : "white",
                   }}
-                  onClick={() => handleLikeClick()}
+                  onClick={() => handleCheckLogin()}
                 />
                 <span>
                   {formatLikesCount(

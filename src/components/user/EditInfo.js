@@ -28,22 +28,22 @@ function EditInfo() {
 
   const validateForm = () => {
     if (firstName === "") {
-      toast.error("FirstName is required.", {
+      toast.error("الاسم الاول مطلوب", {
         position: "top-left",
       });
       return false;
     } else if (lastName === "") {
-      toast.error("LastName is required.", {
+      toast.error("الاسم الاخير مطلوب", {
         position: "top-left",
       });
       return false;
     } else if (phone === "") {
-      toast.error("Phone is required.", {
+      toast.error("رقم الجوال مطلوب", {
         position: "top-left",
       });
       return false;
     } else if (email === "") {
-      toast.error("Email is required.", {
+      toast.error("الايميل مطلوب", {
         position: "top-left",
       });
       return false;
@@ -66,7 +66,7 @@ function EditInfo() {
           streetNumber: users.streetNumber,
         },
       }).then((data) => {
-        toast.success("تمت تعديل البيانات", {
+        toast.success("تم تعديل البيانات", {
           position: "top-left",
         });
         setTimeout(() => {

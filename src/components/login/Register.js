@@ -7,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setemail] = useState("");
-  const user = useSelector((state) => state.auth.user);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const { status, error, isNewUser, userInfo } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
@@ -16,11 +18,10 @@ const Register = () => {
     await axios.post("https://your-api-url.com/register", {
       firstName,
       lastName,
-      email,
-      phoneNumber: user.phoneNumber,
+      phoneNumber,
     });
-    await dispatch(fetchUserProfile(user.id));
-    navigate.push("/profile");
+
+    navigate("/profile");
   };
 
   return (
@@ -43,12 +44,12 @@ const Register = () => {
         />
         <input
           type="email"
-          value={email}
-          onChange={(e) => setemail(e.target.value)}
-          placeholder="ادخل الايميل"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="ادخل رقم الجوال"
           required
         />
-        <button type="submit">انشاء جساب</button>
+        <button type="submit">انشاء حساب</button>
       </form>
     </div>
   );

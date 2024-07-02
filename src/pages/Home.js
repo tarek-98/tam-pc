@@ -5,14 +5,13 @@ import { FaVolumeXmark } from "react-icons/fa6";
 import { getAllComments } from "../store/commentSlice";
 import { useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import CommentList from "../components/comments/CommentList";
-import CommentForm from "../components/comments/CommentForm";
+import Comments from "../components/comments/CommentList";
 
 function Home() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
   const [comment, setComment] = useState(false);
-  const comments = useSelector(getAllComments);
+  const comments = useSelector((state) => state.comments.comments);
   useEffect(() => {
     document.title = "TMGGL";
   }, []);
@@ -21,14 +20,15 @@ function Home() {
     <Fragment>
       <Navbar />
       <Product sound={sound} comment={comment} setComment={setComment} />
-      <div className={volume ? "volume-hide" : "volume"}>
-        <FaVolumeXmark
-          className="text-white fw-bold"
-          onClick={() => {
-            setSound(!sound);
-            setVolume(!volume);
-          }}
-        />
+      <div
+        className={volume ? "volume-hide" : "volume"}
+        onClick={() => {
+          setSound(!sound);
+          setVolume(!volume);
+        }}
+      >
+        <FaVolumeXmark />
+        <span className="">Unmute</span>
       </div>
       <div className={comment ? "comment-wrapper" : "comment-wrapper-hide"}>
         <div className="comment-wrapper-overlay"></div>
@@ -39,14 +39,13 @@ function Home() {
           >
             <IoIosCloseCircleOutline />
             <h2 className="text-comment fs-4">
-              {comments.length > 0 && (
-                <span className="fs-5 me-2">{comments.length}</span>
-              )}
               {comments.length > 0 ? "Comments" : "No Comments"}{" "}
+              {comments.length > 0 && (
+                <span className="fs-5">{comments.length}</span>
+              )}
             </h2>
           </div>
-          <CommentList />
-          <CommentForm />
+          <Comments />
         </div>
       </div>
     </Fragment>

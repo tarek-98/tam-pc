@@ -74,7 +74,23 @@ function Bocket() {
                 style={{ height: "40px" }}
               />
             </Col>
-            <Col xl="6" className="mb-3">
+            <Form.Group
+              as={Col}
+              md="6"
+              controlId="validationCustom04"
+              className="mb-4"
+            >
+              <Form.Label className="mb-2">مبلغ القسيمة</Form.Label>
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  required
+                  type="number"
+                  placeholder="اكتب المبلغ"
+                />
+                <span className="me-1">ر.س</span>
+              </div>
+            </Form.Group>
+            <Col xl="12" className="mb-3">
               <Button type="submit">ارسال هدية</Button>
             </Col>
           </Row>

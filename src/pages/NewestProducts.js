@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import { FaVolumeXmark } from "react-icons/fa6";
-import { getAllComments } from "../store/commentSlice";
 import { useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import CommentList from "../components/comments/CommentList";
@@ -12,7 +11,7 @@ function NewestProducts() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
   const [comment, setComment] = useState(false);
-  const comments = useSelector(getAllComments);
+  const comments = useSelector((state) => state.comments.comments);
   useEffect(() => {
     document.title = "TMGGL";
   }, []);

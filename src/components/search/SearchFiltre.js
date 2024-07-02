@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import { fetchAsyncProducts, getAllProducts } from "../../store/productSlice";
 import vid from "../../videos/video1.mp4";
 import { MdArrowOutward, MdLocalShipping } from "react-icons/md";
-import { fetchVendors } from "../../store/vendorsSlice";
+import { fetchVendors, getAllVendors } from "../../store/vendorsSlice";
 import { IoSearch } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
 function SearchFiltre() {
   const products = useSelector(getAllProducts);
-  const vendors = useSelector((state) => state.vendors);
+  const vendors = useSelector(getAllVendors);
   const [filterItem, setFilterItem] = useState("المنتجات");
   const [search, setSearch] = useState("");
   const [searchMenu, setSearchMenu] = useState(false);
@@ -199,7 +199,7 @@ function SearchFiltre() {
                 {filterVendors.map((vendor, index) => (
                   <div key={index} className="link mb-3">
                     <Link
-                      to={`/product/${vendor.id}`}
+                      to={`/vendorpage/${vendor.id}`}
                       className="text-decoration-none"
                     >
                       <div className="ps-3">

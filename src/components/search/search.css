@@ -224,7 +224,7 @@
   left: 50px;
   z-index: 5000;
   background-color: white;
-  width: 70%;
+  width: 68%;
   padding-top: 13px;
   border: 1px solid #DDD;
   border-bottom-left-radius: 10px;
@@ -242,7 +242,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  cursor: pointer;
 }
 
 .search-suggest-container .search-suggest-item .trans-270 {
@@ -303,5 +303,10 @@
 
   .result-container {
     margin-top: 5px !important;
+  }
+
+  .search-suggest-container {
+    left: 210px;
+    width: 65%;
   }
 }

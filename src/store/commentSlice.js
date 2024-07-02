@@ -1,77 +1,55 @@
+// src/features/comments/commentsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import commentService from "../components/comments/commentService";
+import axios from "axios";
 
-// Async thunk for fetching comments from the API
+const apiUrl = "http://localhost:9000/comments";
+
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
-  async (id) => {
-    const response = await commentService.getComments(id);
+  async () => {
+    const response = await axios.get(`http://localhost:9000/comments`);
     return response.data;
   }
 );
-export const fetchReplies = createAsyncThunk(
-  "comments/fetchReplies",
-  async (commentId) => {
-    const response = await commentService.getReplies(commentId);
-    return { commentId, replies: response.data };
+
+export const addComment = createAsyncThunk(
+  "comments/addComment",
+  async (comment) => {
+    const response = await axios.post(apiUrl, comment);
+    return response.data;
   }
 );
-export const commentsSlice = createSlice({
+
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async (id) => {
+    await axios.delete(`${apiUrl}/${id}`);
+    return id;
+  }
+);
+
+const commentsSlice = createSlice({
   name: "comments",
   initialState: {
     comments: [],
     status: "idle",
     error: null,
   },
-  reducers: {
-    // Reducer functions for adding and removing comments (synchronous)
-    addComment(state, action) {
-      state.comments.push(action.payload);
-    },
-    removeComment(state, action) {
-      state.comments = state.comments.filter(
-        (comment) => comment.id !== action.payload
-      );
-    },
-    addReply(state, action) {
-      const { commentId, reply } = action.payload;
-      const comment = state.comments.find(
-        (comment) => comment.id === commentId
-      );
-      if (comment) {
-        comment.replies.push(reply);
-      }
-    },
-  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchComments.pending, (state, action) => {
-        state.status = "loading";
-      })
-
       .addCase(fetchComments.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.comments = action.payload;
       })
-
-      .addCase(fetchComments.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
+      .addCase(addComment.fulfilled, (state, action) => {
+        state.comments.push(action.payload);
       })
 
-      .addCase(fetchReplies.fulfilled, (state, action) => {
-        const { commentId, replies } = action.payload;
-        const comment = state.comments.find(
-          (comment) => comment.id === commentId
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        state.comments = state.comments.filter(
+          (comment) => comment.id !== action.payload
         );
-        if (comment) {
-          comment.replies = replies;
-        }
       });
   },
 });
-
-export const { addComment, removeComment, addReply } = commentsSlice.actions;
-export const getAllComments = (state) => state.comments.comments;
 
 export default commentsSlice.reducer;
