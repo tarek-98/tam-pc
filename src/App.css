@@ -58,18 +58,39 @@ a {
 }
 
 .volume {
-  position: fixed;
-  bottom: 110px;
-  right: 10px;
-  background-color: #999;
+  left: 12px;
+  position: absolute;
+  top: 80px;
+  min-width: 139px;
+  padding: 0px 16px;
+  height: 36px;
+  z-index: 1;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 1px;
+  background: rgba(255, 255, 255, 0.85);
   z-index: 1000;
-  border-radius: 50%;
-  padding: 1px;
+  cursor: pointer;
 }
 
 .volume svg {
   font-size: 20px;
   cursor: pointer;
+}
+
+.volume span {
+  margin-left: 4px;
+  color: rgb(22, 24, 35);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 18px;
+  padding: 8px 0px;
 }
 
 .volume-hide {
@@ -78,13 +99,28 @@ a {
 
 @media (min-width:768px) {
   .volume {
-    position: fixed;
-    bottom: 60px;
-    right: 45%;
-    background-color: #999;
-    z-index: 1000;
-    border-radius: 50%;
-    padding: 1px;
+    left: 41%;
+    transform: translateX(-41%);
+    position: absolute;
+    top: 90px;
+    min-width: 139px;
+    padding: 0px 16px;
+    height: 36px;
+    z-index: 1;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 1px;
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-transform: translateX(-41%);
+    -moz-transform: translateX(-41%);
+    -ms-transform: translateX(-41%);
+    -o-transform: translateX(-41%);
+    cursor: pointer;
   }
 }
 

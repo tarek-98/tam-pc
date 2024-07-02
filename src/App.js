@@ -18,6 +18,7 @@ import Register from "./components/login/Register";
 import NewestProducts from "./pages/NewestProducts";
 import Following from "./components/products/Following";
 import Bocket from "./components/bocket/Bocket";
+import Vendor from "./components/vendor/Vendor";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/verify-otp" element={<VerifyOtp />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/product/:id" element={<ProductSingle />} />
+                <Route path="/vendorpage/:id" element={<Vendor />} />
                 <Route path="/search" element={<SearchPage />}></Route>
                 <Route path="/cart" element={<CartPage />}></Route>
                 <Route path="/checkout" element={<CheckoutPage />}></Route>
