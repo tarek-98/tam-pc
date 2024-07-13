@@ -21,9 +21,12 @@ import Bocket from "../bocket/Bocket";
 import UserAddress from "../user/UserAddress";
 import EditInfo from "../user/EditInfo";
 import { ToastContainer } from "react-bootstrap";
+import { logOut } from "../../store/authSlice";
+import Favorite from "../favorite/Favorite";
 
 function UserProfile({ socket }) {
   const users = useSelector((state) => state.users);
+  const { userInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const id = 1;
   const [toggleNav, setToggleNav] = useState(0);
@@ -36,7 +39,7 @@ function UserProfile({ socket }) {
   const renderPage = () => {
     switch (currentPage) {
       case "favorite":
-        return null;
+        return <Favorite />;
       case "orders":
         return <Orders />;
       case "bocket":
@@ -48,15 +51,20 @@ function UserProfile({ socket }) {
     }
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  function handleLogout() {
+    dispatch(logOut());
+    // navigate("/login");
+  }
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchUsers(id));
     document.title = "Profile";
   }, []);
+
+  // useEffect(() => {
+  //   console.log(userInfo.ClientID);
+  // }, []);
 
   return (
     <div className="user-profile">
@@ -69,7 +77,7 @@ function UserProfile({ socket }) {
                   <img src={logo1} alt="" />
                 </div>
                 <div className="user-info-details">
-                  <div className="d-flex flex-row-reverse align-items-center">
+                  <div className="d-flex flex-row align-items-center name-details">
                     <span className="ms-1 fw-bold fs-3">{users.firstname}</span>
                     <span className="fw-bold fs-3">{users.lastname}</span>
                   </div>
@@ -166,7 +174,7 @@ function UserProfile({ socket }) {
             </div>
             <div className="user-icon">
               <FaUser />
-              <div className="user-name d-flex">
+              <div className="user-name d-flex flex-row-reverse gap-1">
                 <span className="me-1">{users.firstname}</span>
                 <span>{users.lastname}</span>
               </div>
@@ -180,13 +188,13 @@ function UserProfile({ socket }) {
               </Link>
             </div>
             <div className="user-option-item">
-              <Link className="user-item d-flex w-100">
+              <Link className="user-item d-flex w-100" to="/profile/favorites">
                 <FaHeart />
                 <span>المفضلة</span>
               </Link>
             </div>
             <div className="user-option-item">
-              <Link className="user-item d-flex w-100">
+              <Link className="user-item d-flex w-100" to="/profile/orders">
                 <FaShoppingCart />
                 <span>طلباتي</span>
               </Link>

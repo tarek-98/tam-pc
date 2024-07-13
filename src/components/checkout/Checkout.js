@@ -32,6 +32,7 @@ function Checkout() {
   const [couponCode, setCouponCode] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [shippingName, setShippingName] = useState("");
+  const [paymentName, setPaymentName] = useState("");
 
   /* shipping method*/
   const methods = useSelector((state) => state.shipping.methods);
@@ -91,6 +92,7 @@ function Checkout() {
   };
 
   const groupedItems = groupByVendor(carts);
+  const groupedItemsLength = Object.keys(groupedItems).length;
   const CArtTotlaPrice = carts.reduce((acc, product) => {
     acc += product.discountedPrice * product.quantity;
     return acc;
@@ -99,6 +101,12 @@ function Checkout() {
     acc += product.productWeight * product.quantity;
     return acc;
   }, 0);
+
+  function checkPayment() {
+    if (paymentName === "") {
+      alert("payment methode");
+    }
+  }
 
   const img_url =
     "https://gomla-wbs.el-programmer.com/storage/app/public/product";
@@ -166,11 +174,15 @@ function Checkout() {
                   <FaLocationDot className="fs-3" />
                 </div>
               </div>
+              <div className="num-order d-flex justify-content-around align-items-center ps-4 pe-4 mb-4">
+                <span>عدد الشحنات</span>
+                <span className="fs-5 fw-bold">{groupedItemsLength}</span>
+              </div>
               <div className="cart-chead">
                 {Object.keys(groupedItems).map((vendor) => (
                   <div key={vendor} className="group-ve rounded-3">
                     <div className="menu-button d-flex justify-content-between align-items-center">
-                      <h4 onClick={() => toggleMenu()}>{vendor}</h4>
+                      <h6 onClick={() => toggleMenu()}>{vendor}</h6>
                       <span>
                         {groupedItems[vendor].total +
                           groupedItems[vendor].total * 0.15 -
@@ -182,7 +194,7 @@ function Checkout() {
                         onClick={toggleModalShipping}
                       >
                         <FaShippingFast className="ms-1" />
-                        <span>اختر طريقة الشحن</span>
+                        <span className="d-pc">اختر طريقة الشحن</span>
                       </div>
                       <MdOutlineKeyboardArrowDown
                         className="fs-4"
@@ -294,7 +306,7 @@ function Checkout() {
                         : "cart-total-item d-flex justify-content-between"
                     }
                   >
-                    <span>الشحن - {shippingName}</span>
+                    <span>الشحن</span>
                     <span>{shippingPrice} ر.س</span>
                   </div>
                   <div
@@ -374,7 +386,13 @@ function Checkout() {
                     <img src={applePay} alt="" />
                   </div>
                   <div className="apple-but">
-                    <input type="radio" name="payment" id="apple-pay-input" />
+                    <input
+                      type="radio"
+                      name="payment"
+                      id="apple-pay-input"
+                      value="Apple Pay"
+                      onChange={(e) => setPaymentName(e.target.value)}
+                    />
                     <label htmlFor="apple-pay-input">Apple Pay</label>
                   </div>
                 </div>
@@ -383,7 +401,13 @@ function Checkout() {
                     <img src={visa} alt="" />
                   </div>
                   <div className="visa-but">
-                    <input type="radio" name="payment" id="visa-pay-input" />
+                    <input
+                      type="radio"
+                      name="payment"
+                      id="visa-pay-input"
+                      value="الدفع باستخدام البطاقة"
+                      onChange={(e) => setPaymentName(e.target.value)}
+                    />
                     <label htmlFor="visa-pay-input">
                       الدفع باستخدام البطاقة
                     </label>
@@ -400,6 +424,8 @@ function Checkout() {
                           type="radio"
                           name="payment"
                           id="tappy-pay-input"
+                          value="الدفع باستخدام تابي"
+                          onChange={(e) => setPaymentName(e.target.value)}
                         />
                         <label htmlFor="tappy-pay-input">
                           الدفع باستخدام تابي
@@ -415,6 +441,7 @@ function Checkout() {
                     to="/checkout"
                     type="button"
                     className="checkout-bt me-2 fw-bolder rounded-4 ps-5 pe-5"
+                    onClick={() => checkPayment()}
                   >
                     متابعة الدفع
                   </Link>
@@ -469,57 +496,33 @@ function Checkout() {
             </div>
             <div className="ps-1 pe-1">
               <div className="shipping-method-item ms-auto">
-                {enabledMethods.length === 1 ? (
-                  <div
-                    id={`shipping-info${enabledMethods[0].id}`}
-                    className="shipping-info mb-2"
-                    key={enabledMethods[0].id}
-                    onClick={() => shippingMethod(enabledMethods[0])}
-                  >
-                    <span className="bullet ms-2">
-                      <span className=""></span>
-                    </span>
-                    <div className="shipping-shipping w-100 d-flex justify-content-between align-items-center flex-row-reverse">
-                      <span>{enabledMethods[0].name}</span>
-                      <span className="d-flex">
-                        <span className="me-1">ر.س</span>
-                        <span>{enabledMethods[0].price}</span>
+                {enabledMethods.map((method) => {
+                  return (
+                    <div
+                      id={`shipping-info${method.id}`}
+                      className="shipping-info mb-2"
+                      key={method.id}
+                      onClick={() => shippingMethod(method)}
+                    >
+                      <span className="bullet ms-2">
+                        <span className=""></span>
                       </span>
-                    </div>
-                  </div>
-                ) : enabledMethods.length > 1 ? (
-                  <Fragment>
-                    {enabledMethods.map((method) => {
-                      return (
-                        <div
-                          id={`shipping-info${method.id}`}
-                          className="shipping-info mb-2"
-                          key={method.id}
-                          onClick={() => shippingMethod(method)}
-                        >
-                          <span className="bullet ms-2">
-                            <span className=""></span>
+                      <div className="shipping-shipping w-100 d-flex justify-content-between align-items-center flex-row-reverse">
+                        <span>
+                          {method.name}
+                          <br />
+                          <span className="text-black-50">
+                            {method.shippingDuration}
                           </span>
-                          <div className="shipping-shipping w-100 d-flex justify-content-between align-items-center flex-row-reverse">
-                            <span>
-                              {method.name}
-                              <br />
-                              <span className="text-black-50">
-                                {method.shippingDuration}
-                              </span>
-                            </span>
-                            <span className="d-flex">
-                              <span className="me-1">ر.س</span>
-                              <span>{method.price}</span>
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </Fragment>
-                ) : (
-                  ""
-                )}
+                        </span>
+                        <span className="d-flex">
+                          <span className="me-1">ر.س</span>
+                          <span>{method.price}</span>
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

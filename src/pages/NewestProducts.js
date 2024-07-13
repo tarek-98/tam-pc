@@ -1,33 +1,133 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import { FaVolumeXmark } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import CommentList from "../components/comments/CommentList";
-import CommentForm from "../components/comments/CommentForm";
+import Comments from "../components/comments/CommentList";
 import NewestProduct from "../components/products/NewestProduct";
+import { getAllNewestProducts, getProductSingle } from "../store/productSlice";
+import Swal from "sweetalert2";
+import { addToCart } from "../store/cartSlice";
+import { fetchShippingMethods } from "../store/shippingSlice";
 
 function NewestProducts() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
+  const [info, setInfo] = useState(false);
+  const [addProduct, setAddProduct] = useState(false);
   const [comment, setComment] = useState(false);
   const comments = useSelector((state) => state.comments.comments);
+  const products = useSelector(getAllNewestProducts);
+  const product = useSelector(getProductSingle);
+
+  const [quantity, setQuantity] = useState(1);
+  const [changeBackground, setChangeBackground] = useState(product.thumbnail);
+  const [discount, setdiscount] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (product.discount > 0) {
+      setdiscount(true);
+    }
+    console.log(product);
+  }, []);
+
+  const increaseQty = () => {
+    setQuantity((prevQty) => {
+      let tempQty = prevQty + 1;
+      if (tempQty > product.stock) tempQty = product.stock;
+      return tempQty;
+    });
+  };
+
+  const decreaseQty = () => {
+    setQuantity((prevQty) => {
+      let tempQty = prevQty - 1;
+      if (tempQty < 1) tempQty = 1;
+      return tempQty;
+    });
+  };
+
+  //handle size
+  const data = [41, 42, 43];
+  const [toggleState, setToggleState] = useState(null);
+  let discountedPrice = product.price - product.discount;
+  const addToCartHandler = (product) => {
+    // - product.price * (product.discountPercentage / 100);
+    let discountedPrice = product.price - product.discount;
+    let totalPrice = quantity * discountedPrice;
+    let productColor = [changeBackground];
+    let productWeight = product.price; //edit
+    let productLocation = "الرياض";
+    let vendorName = "احمد";
+
+    dispatch(
+      addToCart({
+        ...product,
+        quantity: quantity,
+        totalPrice,
+        size: toggleState,
+        discountedPrice,
+        productColor,
+        productWeight,
+        productLocation,
+        vendorName,
+      })
+    );
+  };
+
+  const img_url =
+    "https://gomla-wbs.el-programmer.com/storage/app/public/product";
+
+  function sweetAlertAdd() {
+    Swal.fire({
+      title: "تم اضافة المنتج بنجاح",
+      icon: "success",
+      confirmButtonText: "فهمت",
+    });
+  }
+  function sweetAlertOption() {
+    Swal.fire({
+      title: "قم بتحديد خيارات المنتج أولا",
+      icon: "warning",
+      confirmButtonText: "فهمت",
+    });
+  }
+  /* shipping method*/
+  const methods = useSelector((state) => state.shipping.methods);
+  useEffect(() => {
+    dispatch(fetchShippingMethods());
+  }, [dispatch]);
+  const enabledMethods = methods.filter((method) => method.enabled);
+  /* */
+
   useEffect(() => {
     document.title = "TMGGL";
+    console.log(product);
   }, []);
 
   return (
     <Fragment>
       <Navbar />
-      <NewestProduct sound={sound} comment={comment} setComment={setComment} />
-      <div className={volume ? "volume-hide" : "volume"}>
-        <FaVolumeXmark
-          className="text-white fw-bold"
-          onClick={() => {
-            setSound(!sound);
-            setVolume(!volume);
-          }}
-        />
+      <NewestProduct
+        sound={sound}
+        comment={comment}
+        info={info}
+        setInfo={setInfo}
+        addProduct={addProduct}
+        setAddProduct={setAddProduct}
+        setComment={setComment}
+        products={products}
+      />
+      <div
+        className={volume ? "volume-hide" : "volume"}
+        onClick={() => {
+          setSound(!sound);
+          setVolume(!volume);
+        }}
+      >
+        <FaVolumeXmark />
+        <span className="">Unmute</span>
       </div>
       <div className={comment ? "comment-wrapper" : "comment-wrapper-hide"}>
         <div className="comment-wrapper-overlay"></div>
@@ -44,10 +144,154 @@ function NewestProducts() {
               {comments.length > 0 ? "Comments" : "No Comments"}{" "}
             </h2>
           </div>
-          <CommentList />
-          <CommentForm />
+          <Comments product={product} />
         </div>
       </div>
+      <div className={info ? "info-home" : "info-home-hide"}>
+        <div className="info-overlay"></div>
+        <div className="info-container p-3">
+          <div className="close" onClick={() => setInfo((info) => !info)}>
+            <IoIosCloseCircleOutline />
+          </div>
+          <div className="product-details">{product.title}</div>
+        </div>
+      </div>
+      {product && (
+        <div className={addProduct ? "add-product" : "add-product-hide"}>
+          <div className="addProduct-overlay"></div>
+          <div className="addProduct-container">
+            <div
+              className="close"
+              onClick={() => setAddProduct((addProduct) => !addProduct)}
+            >
+              <IoIosCloseCircleOutline />
+            </div>
+            <div className="product-option">
+              <div>
+                <div className="product-img">
+                  <div className="product-img-zoom w-100 mb-2">
+                    <img
+                      src={product.image}
+                      alt=""
+                      className="img-cover w-100 h-100"
+                    />
+                  </div>
+                  <div className="product-img-thumbs d-flex align-center">
+                    <div className="thumb-item">
+                      <img
+                        src={product.image}
+                        alt=""
+                        className="img-cover w-100"
+                      />
+                    </div>
+                    <div className="thumb-item">
+                      <img
+                        src={product.image}
+                        alt=""
+                        className="img-cover w-100"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="product-single-r mt-1" dir="rtl">
+                  <div className="product-details font-manrope">
+                    <div className="title mb-3">{product.name}</div>
+                    <div className="product loc">
+                      <span>يشحن من </span>
+                      <span className=" text-danger">الرياض</span>
+                    </div>
+                    <div className="price mb-2">
+                      <div className="d-flex align-center">
+                        <div className="new-price ms-3">
+                          <span>السعر : </span>
+                          <span>
+                            {(discountedPrice + discountedPrice * 0.15) *
+                              quantity}
+                            ر.س
+                          </span>
+                        </div>
+                        {discount && (
+                          <div className="old-price">
+                            {product.price + product.price * 0.15} ر.س
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="qty align-center m-1 mb-2">
+                      <div className="qty-text mb-2 ms-2">الكمية :</div>
+                      <div className="qty-change d-flex">
+                        <button
+                          type="button"
+                          className="qty-decrease d-flex justify-content-center"
+                          onClick={() => decreaseQty()}
+                        >
+                          -
+                        </button>
+                        <div className="qty-value d-flex justify-content-center">
+                          {quantity}
+                        </div>
+                        <button
+                          type="button"
+                          className="qty-increase d-flex justify-content-center"
+                          onClick={() => increaseQty()}
+                        >
+                          +
+                        </button>
+                      </div>
+                      {product.current_stock === 0 ? (
+                        <div className="qty-error text-uppercase bg-danger text-white">
+                          out of stock
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                    <div className="size-opt d-flex">
+                      <div className="size-text mb-2 ms-2">المقاس :</div>
+                      <div className="size-change d-flex">
+                        <ul className="size-list">
+                          {data.map((siz) => {
+                            return (
+                              <li
+                                className="list-item"
+                                onClick={() => setToggleState(siz)}
+                              >
+                                <span
+                                  className={
+                                    toggleState === siz
+                                      ? "list-item-opt active"
+                                      : "list-item-opt"
+                                  }
+                                >
+                                  {siz}
+                                </span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="send-cart text-center mt-1 text-white"
+                onClick={() => {
+                  if (toggleState === null) {
+                    sweetAlertOption();
+                  } else {
+                    setAddProduct((addProduct) => !addProduct);
+                    addToCartHandler(product);
+                    sweetAlertAdd();
+                  }
+                }}
+              >
+                اضف الي السلة
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Fragment>
   );
 }

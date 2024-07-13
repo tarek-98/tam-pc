@@ -55,6 +55,10 @@
   font-size: 25px;
 }
 
+.user-profile .user-info-details .name-details {
+  direction: rtl;
+}
+
 .user-profile .user-options {
   direction: rtl;
 }

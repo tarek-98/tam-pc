@@ -275,6 +275,11 @@
   padding: 0 15px;
 }
 
+.group-ve h6 {
+  cursor: pointer;
+  margin: 0;
+}
+
 .df-location {
   display: flex;
   justify-content: space-between;
@@ -636,5 +641,11 @@
 }
 
 .choose-shippong span {
-  font-size: 12px;
+  font-size: 10px;
+}
+
+@media (max-width:424px) {
+  .choose-shippong span {
+    display: none;
+  }
 }

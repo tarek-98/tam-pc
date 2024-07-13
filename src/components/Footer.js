@@ -29,7 +29,7 @@ function Footer() {
             </Link>
           </div>
           <div className="tab-container pop">
-            <Link to="/" className="tab-link">
+            <Link to="/inbox" className="tab-link">
               <MdOutlineMoveToInbox className="tab-icon" />
               <span
                 className={carts.length <= 0 ? "cart-num-hide" : "cart-num"}

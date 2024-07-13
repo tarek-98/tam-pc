@@ -4,17 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchComments,
   addComment,
-  editComment,
   deleteComment,
 } from "../../store/commentSlice";
 import "./comments.css";
 import { FaUser } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
-const Comments = () => {
+const Comments = ({ product }) => {
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments.comments);
+  // const comments = product.comments
   const [newComment, setNewComment] = useState("");
   const [replyText, setReplyText] = useState("");
   const [editMode, setEditMode] = useState(null);

@@ -1,33 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendOTP, setPhoneNumber } from "../../store/authSlice";
+import { loginAsync, sendOTP, setPhoneNumber } from "../../store/authSlice";
 import { useNavigate } from "react-router";
 import "./login.css";
 import logo from "../../assets/images/logo.jpeg";
 import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { status, error } = useSelector((state) => state.auth);
+  const { status } = useSelector((state) => state.auth);
 
   const saudiPhoneNumberRegex = /^0[0-9]{9}$/;
+
+  useEffect(() => {
+    if (status === "succeeded") {
+      navigate("/profile");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(status);
-    if (saudiPhoneNumberRegex.test(phone)) {
-      dispatch(setPhoneNumber(phone));
-      dispatch(sendOTP(phone));
-      if (status === "succeeded") {
-        navigate("/verify-otp");
-      }
-    } else {
-      toast.error("ادخل رقم جوال صالح", {
-        position: "top-left",
-      });
-    }
+    dispatch(loginAsync({ email, pass }));
   };
 
   return (
@@ -43,14 +40,25 @@ const Login = () => {
               <form onSubmit={handleSubmit} className=" d-flex flex-column">
                 <input
                   className="mb-2"
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="مثال 0512345678"
                   required
-                  maxLength="10"
-                  minLength="10"
+                  // maxLength="10"
+                  // minLength="10"
                   name="phone"
+                />
+                <input
+                  className="mb-2"
+                  type="password"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  // placeholder="مثال 0512345678"
+                  required
+                  // maxLength="10"
+                  // minLength="10"
+                  name="pass"
                 />
                 <button type="submit" className="mb-2" value="">
                   تسجيل الدخول

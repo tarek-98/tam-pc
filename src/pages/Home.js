@@ -2,16 +2,17 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Product from "../components/Product";
 import { FaVolumeXmark } from "react-icons/fa6";
-import { getAllComments } from "../store/commentSlice";
 import { useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Comments from "../components/comments/CommentList";
+import { getAllNewestProducts } from "../store/productSlice";
 
 function Home() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
   const [comment, setComment] = useState(false);
   const comments = useSelector((state) => state.comments.comments);
+  const products = useSelector(getAllNewestProducts);
   useEffect(() => {
     document.title = "TMGGL";
   }, []);
@@ -19,7 +20,12 @@ function Home() {
   return (
     <Fragment>
       <Navbar />
-      <Product sound={sound} comment={comment} setComment={setComment} />
+      <Product
+        sound={sound}
+        comment={comment}
+        setComment={setComment}
+        products={products}
+      />
       <div
         className={volume ? "volume-hide" : "volume"}
         onClick={() => {

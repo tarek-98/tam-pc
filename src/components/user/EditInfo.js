@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers } from "../../store/usersSlice";
+import { editUser, fetchUsers } from "../../store/usersSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/images/logo.jpeg";
@@ -13,11 +13,14 @@ import { Link } from "react-router-dom";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
 function EditInfo() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const [userData, setUserData] = useState({
+    FirstName: "",
+    LastName: "",
+    Password: "",
+    Email: "",
+    PhoneNumber: "",
+  });
   const users = useSelector((state) => state.users);
 
   const id = 1;
@@ -26,23 +29,35 @@ function EditInfo() {
     dispatch(fetchUsers(id));
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value,
+    });
+  };
+
+  function handleEdit() {
+    dispatch(editUser({ id, userData }));
+  }
+
   const validateForm = () => {
-    if (firstName === "") {
+    if (userData.FirstName === "") {
       toast.error("الاسم الاول مطلوب", {
         position: "top-left",
       });
       return false;
-    } else if (lastName === "") {
+    } else if (userData.LastName === "") {
       toast.error("الاسم الاخير مطلوب", {
         position: "top-left",
       });
       return false;
-    } else if (phone === "") {
+    } else if (userData.PhoneNumber === "") {
       toast.error("رقم الجوال مطلوب", {
         position: "top-left",
       });
       return false;
-    } else if (email === "") {
+    } else if (userData.Email === "") {
       toast.error("الايميل مطلوب", {
         position: "top-left",
       });
@@ -54,25 +69,7 @@ function EditInfo() {
   const formSubmet = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      axios({
-        method: "PUT",
-        url: "http://localhost:9000/users/1",
-        data: {
-          firstname: firstName,
-          lastname: lastName,
-          email: email,
-          phone: phone,
-          city: users.city,
-          streetNumber: users.streetNumber,
-        },
-      }).then((data) => {
-        toast.success("تم تعديل البيانات", {
-          position: "top-left",
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
+      handleEdit();
     }
   };
 
@@ -96,24 +93,30 @@ function EditInfo() {
             <Form.Label>الاسم الاول</Form.Label>
             <Form.Control
               type="text"
+              name="FirstName"
+              value={userData.FirstName}
               placeholder={users.firstname}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicLast">
             <Form.Label>الاسم الاخير</Form.Label>
             <Form.Control
               type="text"
+              name="LastName"
               placeholder={users.lastname}
-              onChange={(e) => setLastName(e.target.value)}
+              value={userData.LastName}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPhone">
             <Form.Label>رقم الجوال</Form.Label>
             <Form.Control
               type="text"
+              name="PhoneNumber"
               placeholder={users.phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={userData.PhoneNumber}
+              onChange={handleChange}
               maxLength="10"
               minLength="10"
             />
@@ -122,8 +125,10 @@ function EditInfo() {
             <Form.Label>الايميل</Form.Label>
             <Form.Control
               type="email"
+              name="Email"
+              value={userData.Email}
               placeholder={users.email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCity">

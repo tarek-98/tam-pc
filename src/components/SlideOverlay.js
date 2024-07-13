@@ -10,6 +10,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { CiLink } from "react-icons/ci";
 import { fetchComments } from "../store/commentSlice";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { addToFavorite, delFavorite } from "../store/favorite-slice";
+import { followVendor } from "../store/vendorsSlice";
+import {
+  fetchAsyncProductSingle,
+  getAllNewestProducts,
+} from "../store/productSlice";
 
 function SlideOverlay({
   product,
@@ -21,8 +27,7 @@ function SlideOverlay({
   setInfo,
 }) {
   const dispatch = useDispatch();
-  const [liked, setLiked] = useState(false);
-  const [iconPlus, setIconPlus] = useState(true);
+  const navigate = useNavigate();
   const comments = useSelector((state) => state.comments.comments);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -45,34 +50,26 @@ function SlideOverlay({
     return count;
   };
 
-  const handleLikeClick = () => {
-    const newLikedState = !liked;
-    setLiked(newLikedState);
-    localStorage.setItem(`liked-${product.id}`, newLikedState);
-    console.log(isAuthenticated);
-  };
+  const productId = product.id;
+  const UserId = product.seller.id;
+  const VendorId = product.seller.id;
+
+  // const isFavorite = favorites.some((fav) => fav.videoId === videoId); for favorite
+  const products = useSelector(getAllNewestProducts); // will be favorites products
+  const isFavorite = products.some((fav) => fav.id === product.id); //test fav
+  const isFollower = products.some((follow) => follow.id === product.seller.id); //test follower
+
   const handIconClick = () => {
-    setIconPlus((prevIconPlus) => !prevIconPlus);
+    dispatch(followVendor({ VendorId, UserId }));
   };
-  const navigate = useNavigate();
-  function login() {
-    navigate("/login");
-  }
 
-  useEffect(() => {
-    // Retrieve saved state from local storage using the unique ID
-    const savedState = localStorage.getItem(`liked-${product.id}`);
-    if (savedState === "true") {
-      setLiked(true);
-    }
-  }, [product.id]);
-
-  function handleCheckLogin() {
-    if (isAuthenticated) {
-      handleLikeClick();
+  function handleAddFavorite() {
+    if (isFavorite) {
+      dispatch(delFavorite({ productId, UserId }));
     } else {
-      login();
+      dispatch(addToFavorite({ productId, UserId }));
     }
+    console.log({ productId, UserId });
   }
 
   return (
@@ -85,7 +82,7 @@ function SlideOverlay({
               <div className="wrapper">
                 <div className="follow-plus">
                   <GoPlus
-                    className={iconPlus ? "icon-plus" : "icon-plus-hide"}
+                    className={isFollower ? "icon-plus" : "icon-plus-hide"}
                     onClick={handIconClick}
                   />
                 </div>
@@ -95,13 +92,13 @@ function SlideOverlay({
               <div className="item">
                 <FaHeart
                   style={{
-                    color: liked ? "#FF0000" : "white",
+                    color: isFavorite ? "#FF0000" : "white",
                   }}
-                  onClick={() => handleCheckLogin()}
+                  onClick={() => handleAddFavorite()}
                 />
                 <span>
                   {formatLikesCount(
-                    parseLikesCount(product.unit_price) + (liked ? 1 : 0)
+                    parseLikesCount(product.unit_price) + (isFavorite ? 1 : 0)
                   )}
                 </span>
               </div>
@@ -113,7 +110,7 @@ function SlideOverlay({
                 onClick={() => {
                   setComment((comment) => !comment);
                   setSocial(false);
-                  dispatch(fetchComments(product.id));
+                  dispatch(fetchAsyncProductSingle(product.id));
                 }}
               >
                 <FaCommentDots />
@@ -132,6 +129,7 @@ function SlideOverlay({
                 onClick={() => {
                   setSocial(false);
                   setInfo(true);
+                  dispatch(fetchAsyncProductSingle(product.id));
                 }}
               >
                 <HiMiniBars3 />
@@ -148,24 +146,15 @@ function SlideOverlay({
                 <FaShare />
                 <span>share</span>
               </div>
+              <div className={social ? "social-home" : "social-home-hide"}>
+                <div className="social-conatact-link">
+                  <CiLink />
+                </div>
+                <div className="social-conatact-call">
+                  <FaWhatsapp />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className={social ? "social-home" : "social-home-hide"}>
-          <div className="social-conatact-link">
-            <CiLink />
-          </div>
-          <div className="social-conatact-call">
-            <FaWhatsapp />
-          </div>
-        </div>
-        <div className={info ? "info-home" : "info-home-hide"}>
-          <div className="info-overlay"></div>
-          <div className="info-container">
-            <div className="close" onClick={() => setInfo((info) => !info)}>
-              <IoIosCloseCircleOutline />
-            </div>
-            <div className="product-details">{product.details}</div>
           </div>
         </div>
       </div>

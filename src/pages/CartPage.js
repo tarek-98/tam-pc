@@ -9,6 +9,11 @@ import "../components/cart.css";
 const CartPage = () => {
   const dispatch = useDispatch();
   const carts = useSelector(getAllCarts);
+  const { userInfo } = useSelector((state) => state.auth);
+
+  // useEffect(() => {
+  //   console.log(userInfo.ClientID);
+  // }, []);
 
   useEffect(() => {
     document.title = "Cart";

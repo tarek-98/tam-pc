@@ -8,6 +8,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const { status, error, isNewUser, userInfo } = useSelector(
     (state) => state.auth
   );
@@ -18,6 +19,7 @@ const Register = () => {
     await axios.post("https://your-api-url.com/register", {
       firstName,
       lastName,
+      email,
       phoneNumber,
     });
 
@@ -44,6 +46,13 @@ const Register = () => {
         />
         <input
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="ادخل رقم الجوال"
+          required
+        />
+        <input
+          type="text"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="ادخل رقم الجوال"

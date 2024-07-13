@@ -1,0 +1,100 @@
+:root {
+  --color-black: #000;
+  --color-white: #fff;
+  --color-orange: #F94E30;
+  --color-light-orange: #FF6433;
+  --color-light-gray: #F2F2F2;
+  --color-light: #F4F4F4;
+  --color-whitesmoke: #F5F5F5;
+  --color-dark: #212529;
+  --color-danger: #DC3545;
+  --color-gray: #929292;
+  --font-family-manrope: 'Manrope', sans-serif;
+  --font-family-poppins: 'Poppins', sans-serif;
+  --transition-ease: all 300ms ease-in-out;
+}
+
+.main-inbox {
+  background: rgb(255, 255, 255) !important;
+  height: 100%;
+  padding: 10px 20px;
+  direction: rtl;
+  overflow: scroll;
+}
+
+.main-inbox::-webkit-scrollbar {
+  display: none;
+}
+
+.main-inbox .notification,
+.main-inbox .chat {
+  position: relative;
+}
+
+.main-inbox .notification a,
+.main-inbox .chat a {
+  display: flex;
+  width: 100%;
+  background-color: #DDD;
+  color: black;
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+.main-inbox .notification .float,
+.main-inbox .chat .float {
+  position: absolute;
+  background-color: var(--color-danger);
+  width: 10px;
+  height: 10px;
+  top: -3px;
+  right: 0;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+/*chat*/
+.user-list {
+  width: 25%;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+}
+
+.chat-box {
+  width: 75%;
+  padding: 20px;
+}
+
+.messages {
+  height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.message {
+  padding: 5px 0;
+}
+
+.message.sent {
+  text-align: right;
+}
+
+.message.received {
+  text-align: left;
+}
+
+/**/
+.main-inbox .toast {
+  background-color: #007bff;
+  color: #fff;
+}

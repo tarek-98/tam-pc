@@ -19,10 +19,10 @@ function HeadPc() {
           </Link>
         </div>
         <div className="option">
-          <img src={logo2} alt="" />
           <img src={logo3} alt="" />
           <img src={logo4} alt="" />
           <img src={logo7} alt="" />
+          <img src={logo2} alt="" />
           <img src={logo5} alt="" />
           <img src={logo6} alt="" />
         </div>

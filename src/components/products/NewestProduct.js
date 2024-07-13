@@ -11,12 +11,19 @@ import {
   fetchAsyncNewestProducts,
   getAllNewestProducts,
 } from "../../store/productSlice";
+import { increaseProductViews, addViewedProduct } from "../../store/sortSlice";
 
-function NewestProduct({ sound, comment, setComment }) {
-  const [addProduct, setAddProduct] = useState(false);
-  const products = useSelector(getAllNewestProducts);
+function NewestProduct({
+  sound,
+  comment,
+  setComment,
+  products,
+  info,
+  setInfo,
+  addProduct,
+  setAddProduct,
+}) {
   const [social, setSocial] = useState(false);
-  const [info, setInfo] = useState(false);
   const dispatch = useDispatch();
   const videoRef = useRef(null);
 
@@ -26,8 +33,16 @@ function NewestProduct({ sound, comment, setComment }) {
     dispatch(fetchAsyncNewestProducts());
   }, []);
 
-  /*timeLine*/
-  /*end */
+  const handleSlideChange = (swiper) => {
+    const activeSlideIndex = swiper.activeIndex;
+    const activeProduct = products[activeSlideIndex];
+
+    //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
+    if (activeProduct) {
+      dispatch(increaseProductViews(activeProduct.id));
+      dispatch(addViewedProduct(activeProduct.id));
+    }
+  };
 
   const togglePlay = (index) => {
     if (currentVideo === index) {
@@ -55,6 +70,7 @@ function NewestProduct({ sound, comment, setComment }) {
         modules={[Mousewheel]}
         mousewheel={{ forceToAxis: true }}
         className="mySwiper"
+        onSlideChange={handleSlideChange}
         allowSlideNext={addProduct || comment || info ? false : true}
         allowSlidePrev={addProduct || comment || info ? false : true}
         onSlideChangeTransitionStart={function () {

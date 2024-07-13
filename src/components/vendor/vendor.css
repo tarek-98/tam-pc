@@ -90,9 +90,17 @@
   border-bottom: 1px solid var(--color-black);
 }
 
-.vendor-main .vendor-review-item.active,
+.vendor-main .vendor-review-item.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
 .vendor-main .vendor-product-item.active {
   display: flex;
+  align-items: center;
+  justify-content: center;
   direction: rtl;
 }
 
@@ -127,4 +135,17 @@
   .vendor-main .vendor-details .vendor-name span {
     font-size: 16px;
   }
+}
+
+.vendor-product-item .vendor-products-item {
+  position: relative;
+}
+
+.vendor-product-item .vendor-products-item .image {
+  position: relative;
+}
+
+.vendor-product-item .vendor-products-item video {
+  object-fit: cover;
+  width: 100%;
 }

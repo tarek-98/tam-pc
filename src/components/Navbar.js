@@ -8,7 +8,10 @@ function Navbar() {
     <div className="page-header">
       <div className="nav-container w-100 ms-2 me-2">
         <div className="nav-content">
-          <Link to="/search" className="nav-item">
+          <Link
+            to="/search"
+            className="nav-item d-flex align-items-center justify-content-center"
+          >
             <CiSearch className="me-1" />
             <span>البحث</span>
           </Link>

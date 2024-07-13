@@ -8,14 +8,18 @@ import SlideOverlay from "./SlideOverlay";
 import vid2 from "../videos/Download.mp4";
 import BottomOption from "./BottomOption";
 import { Mousewheel } from "swiper/modules";
+import { increaseProductViews, addViewedProduct } from "../store/sortSlice";
 
-function Product({ sound, comment, setComment }) {
+function Product({ sound, comment, setComment, products }) {
   const [addProduct, setAddProduct] = useState(false);
-  const products = useSelector(getAllProducts);
+  // const products = useSelector(getAllProducts);
   const [social, setSocial] = useState(false);
   const [info, setInfo] = useState(false);
   const dispatch = useDispatch();
   const videoRef = useRef(null);
+  const viewedProducts = useSelector(
+    (state) => state.sortedProducts.viewedProducts
+  );
 
   const [currentVideo, setCurrentVideo] = useState(null);
 
@@ -45,6 +49,17 @@ function Product({ sound, comment, setComment }) {
     }
   };
 
+  const handleSlideChange = (swiper) => {
+    const activeSlideIndex = swiper.activeIndex;
+    const activeProduct = products[activeSlideIndex];
+
+    //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
+    if (activeProduct) {
+      dispatch(increaseProductViews(activeProduct.id));
+      dispatch(addViewedProduct(activeProduct.id));
+    }
+  };
+
   const img_url =
     "https://gomla-wbs.el-programmer.com/storage/app/public/product";
 
@@ -57,6 +72,7 @@ function Product({ sound, comment, setComment }) {
         className="mySwiper"
         allowSlideNext={addProduct || comment || info ? false : true}
         allowSlidePrev={addProduct || comment || info ? false : true}
+        onSlideChange={handleSlideChange}
         onSlideChangeTransitionStart={function () {
           var videos = document.querySelectorAll("video");
           Array.prototype.forEach.call(videos, function (video) {

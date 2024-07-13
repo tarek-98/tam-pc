@@ -7,12 +7,17 @@ import {
   getProductSingle,
   getSingleProductStatus,
 } from "../store/productSlice";
-import vid from "../videos/video1.mp4";
+import vid from "../videos/Download.mp4";
+import SlideOverlay from "../components/SlideOverlay";
+import BottomOption from "../components/BottomOption";
+import { FaVolumeXmark } from "react-icons/fa6";
 
 function ProductSingle() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const product = useSelector(getProductSingle);
+  const [volume, setVolume] = useState(false);
+  const [sound, setSound] = useState(true);
 
   const videoRef = useRef(null);
   const togglePlay = () => {
@@ -33,7 +38,7 @@ function ProductSingle() {
   }, []);
 
   return (
-    <div className="single-product">
+    <div className="single-product video-card">
       <div className="video-slide-container">
         <div className="plyer-container">
           <div>
@@ -42,7 +47,7 @@ function ProductSingle() {
               src={vid}
               className="react-player"
               autoPlay
-              muted={true}
+              muted={sound}
               loop
               playsInline={true}
               ref={videoRef}
@@ -51,7 +56,17 @@ function ProductSingle() {
           </div>
         </div>
         {/*<SlideOverlay product={product} />
-  <BottomOption product={product} />*/}
+        <BottomOption product={product} />*/}
+      </div>
+      <div
+        className={volume ? "volume-hide" : "volume-single"}
+        onClick={() => {
+          setSound(!sound);
+          setVolume(!volume);
+        }}
+      >
+        <FaVolumeXmark />
+        <span className="">Unmute</span>
       </div>
     </div>
   );
