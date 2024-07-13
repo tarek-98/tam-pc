@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const API_URL = "https://tager.onrender.com";
 
@@ -25,6 +26,54 @@ export const verifyOTP = createAsyncThunk(
       body: JSON.stringify({ phoneNumber, otp }),
     });
     return response.json();
+  }
+);
+
+// Async thunk for user login
+export const loginAsync = createAsyncThunk(
+  "auth/login",
+  async ({ email, pass }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/client/login/${email}/${pass}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/vendor/new-vendor-request`,
+        userData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+// Async thunk for user login
+export const logOut = createAsyncThunk(
+  "auth/logOut",
+  async ({ rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/client/logout`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
@@ -67,6 +116,27 @@ const authSlice = createSlice({
         state.userInfo = action.payload.userInfo;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(loginAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(loginAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userInfo = action.payload;
+      })
+      .addCase(loginAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(logOut.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(logOut.fulfilled, (state, action) => {
+        state.status = "succeeded";
+      })
+      .addCase(logOut.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

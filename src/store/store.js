@@ -15,6 +15,11 @@ import locationReducer from "./locationSlice";
 import cartSlice from "./cartSlice";
 import shippingReducer from "./shippingSlice";
 import tabbySlice from "./tabbySlice";
+import reviewReducer from "./reviewSlice";
+import chatReducer from "./chatSlice";
+import notificationsReducer from "./notificationsSlice";
+import sortSlice from "./sortSlice";
+import ordersSlice from "./ordersSlice";
 
 const preloadedState = loadState();
 
@@ -34,6 +39,11 @@ const store = configureStore({
     location: locationReducer,
     shipping: shippingReducer,
     payments: tabbySlice,
+    reviews: reviewReducer,
+    chat: chatReducer,
+    notifications: notificationsReducer,
+    sortedProducts: sortSlice,
+    orders: ordersSlice,
   },
   preloadedState,
 });

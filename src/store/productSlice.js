@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUS } from "../utils/status";
 
+const API_URL = "http://tager.onrender.com";
+
 const initialState = {
   products: [],
   productsStatus: STATUS.IDLE,
@@ -8,6 +10,8 @@ const initialState = {
   productSingleStatus: STATUS.IDLE,
   newestProducts: [],
   newestProductsStatus: STATUS.IDLE,
+  productsByVendor: [],
+  productsByVendorStatus: STATUS.IDLE,
 };
 
 const productSlice = createSlice({
@@ -17,7 +21,7 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAsyncProducts.pending, (state, action) => {
-        state.status = "loading";
+        state.productsStatus = "loading";
       })
 
       .addCase(fetchAsyncProducts.fulfilled, (state, action) => {
@@ -26,7 +30,7 @@ const productSlice = createSlice({
       })
 
       .addCase(fetchAsyncProducts.rejected, (state, action) => {
-        state.status = "failed";
+        state.productsStatus = "failed";
       })
 
       .addCase(fetchAsyncProductSingle.pending, (state, action) => {
@@ -52,6 +56,19 @@ const productSlice = createSlice({
 
       .addCase(fetchAsyncNewestProducts.rejected, (state, action) => {
         state.newestProductsStatus = STATUS.FAILED;
+      })
+
+      .addCase(fetchProductByVendor.pending, (state, action) => {
+        state.productsByVendorStatus = STATUS.LOADING;
+      })
+
+      .addCase(fetchProductByVendor.fulfilled, (state, action) => {
+        state.productsByVendor = action.payload;
+        state.productsByVendorStatus = STATUS.SUCCEEDED;
+      })
+
+      .addCase(fetchProductByVendor.rejected, (state, action) => {
+        state.productsByVendorStatus = STATUS.FAILED;
       });
   },
 });
@@ -61,7 +78,8 @@ export const fetchAsyncProducts = createAsyncThunk(
   "products/fetch",
   async () => {
     const response = await fetch(
-      "https://gomla-wbs.el-programmer.com/api/products/latest"
+      // "https://gomla-wbs.el-programmer.com/api/products/latest"
+      `${API_URL}/products/getall`
     );
     const data = await response.json();
     return data.products;
@@ -82,7 +100,17 @@ export const fetchAsyncNewestProducts = createAsyncThunk(
 export const fetchAsyncProductSingle = createAsyncThunk(
   "product-single/fetch",
   async (id) => {
-    const response = await fetch(`https://dummyjson.com/products/${id}`);
+    // const response = await fetch(`${API_URL}/products/product/${id}`);
+    const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+    const data = await response.json();
+    return data;
+  }
+);
+// getting the single product data also
+export const fetchProductByVendor = createAsyncThunk(
+  "fetchProductByVendor/fetch",
+  async (vendorId) => {
+    const response = await fetch(`${API_URL}/products/products/${vendorId}`);
     const data = await response.json();
     return data;
   }
@@ -90,6 +118,7 @@ export const fetchAsyncProductSingle = createAsyncThunk(
 
 export const getAllProducts = (state) => state.product.products;
 export const getAllNewestProducts = (state) => state.product.newestProducts;
+export const getProductsByVendor = (state) => state.product.productsByVendor;
 export const getAllProductsStatus = (state) => state.product.productsStatus;
 export const getProductSingle = (state) => state.product.productSingle;
 export const getSingleProductStatus = (state) =>

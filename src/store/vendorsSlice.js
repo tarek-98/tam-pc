@@ -1,8 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const API_URL = "http://tager.onrender.com";
 
 const initialState = {
   vendors: [],
   singleVendor: [],
+  followers: [],
 };
 
 export const fetchVendors = createAsyncThunk(
@@ -22,17 +26,90 @@ export const fetchSingleVendor = createAsyncThunk(
   }
 );
 
+//follow vendor
+export const followVendor = createAsyncThunk(
+  "vendors/followVendor",
+  async ({ VendorId, UserId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `${API_URL}/client/follow-vendor/${VendorId}/${UserId}`
+      );
+      console.log(response.data);
+      console.log(UserId, VendorId);
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      console.log(UserId, VendorId);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const unFollowVendor = createAsyncThunk(
+  "vendors/unFollowVendor",
+  async ({ VendorId, UserId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/client/unfollow-vendor/${VendorId}/${UserId}`
+      );
+      console.log(response.data);
+      console.log(UserId, VendorId);
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data);
+      console.log(UserId, VendorId);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const vendorsSlice = createSlice({
   name: "vendors",
   initialState,
+  status: "idle",
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchVendors.fulfilled, (state, action) => {
-      state.vendors = action.payload;
-    });
-    builder.addCase(fetchSingleVendor.fulfilled, (state, action) => {
-      state.singleVendor = action.payload;
-    });
+    builder
+      .addCase(fetchVendors.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchVendors.fulfilled, (state, action) => {
+        state.vendors = action.payload;
+        state.status = "succeded";
+      })
+      .addCase(fetchVendors.rejected, (state, action) => {
+        state.status = "failed";
+      })
+      .addCase(fetchSingleVendor.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchSingleVendor.fulfilled, (state, action) => {
+        state.singleVendor = action.payload;
+        state.status = "succeded";
+      })
+      .addCase(fetchSingleVendor.rejected, (state, action) => {
+        state.status = "failed";
+      })
+      .addCase(followVendor.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(followVendor.fulfilled, (state, action) => {
+        state.status = "succeded";
+        state.followers = action.payload;
+      })
+      .addCase(followVendor.rejected, (state, action) => {
+        state.status = "failed";
+      })
+      .addCase(unFollowVendor.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(unFollowVendor.fulfilled, (state, action) => {
+        state.status = "succeded";
+        state.followers = action.payload;
+      })
+      .addCase(unFollowVendor.rejected, (state, action) => {
+        state.status = "failed";
+      });
   },
 });
 

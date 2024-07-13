@@ -19,6 +19,12 @@ import NewestProducts from "./pages/NewestProducts";
 import Following from "./components/products/Following";
 import Bocket from "./components/bocket/Bocket";
 import Vendor from "./components/vendor/Vendor";
+import Inbox from "./components/chat/Inbox";
+import Notifications from "./components/chat/Notifications";
+import Chat from "./components/chat/Chat";
+import Orders from "./components/Orders/Orders";
+import Favorite from "./components/favorite/Favorite";
+import OrderInfo from "./components/Orders/OrderInfo";
 
 function App() {
   return (
@@ -40,7 +46,16 @@ function App() {
                 <Route path="/search" element={<SearchPage />}></Route>
                 <Route path="/cart" element={<CartPage />}></Route>
                 <Route path="/checkout" element={<CheckoutPage />}></Route>
+                <Route path="/inbox" element={<Inbox />}></Route>
+                <Route
+                  path="/inbox/notifications"
+                  element={<Notifications />}
+                ></Route>
+                <Route path="/inbox/chat" element={<Chat />}></Route>
                 <Route path="/profile" element={<Profile />}></Route>
+                <Route path="/profile/orders" element={<Orders />}></Route>
+                <Route path="/profile/orders/:id" element={<OrderInfo />} />
+                <Route path="/profile/favorites" element={<Favorite />}></Route>
                 <Route path="/profile/gifts" element={<Bocket />}></Route>
                 <Route path="/profile/editInfo" element={<EditInfo />} />
                 <Route path="/profile/address" element={<UserAddress />} />
