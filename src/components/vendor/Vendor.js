@@ -65,15 +65,11 @@ function Vendor() {
   function handleFollowVendor() {
     setVendorFollow(!vendorFollow);
     if (!isFollower) {
-      toast.success("تم متابعة التاجر بنجاح", {
-        position: "top-left",
-      });
+     
       dispatch(followVendor({ VendorId: id, UserId }));
     } else {
       dispatch(unFollowVendor({ VendorId: id, UserId }));
-      toast.success("تم الغاء المتابعة  بنجاح", {
-        position: "top-left",
-      });
+     
     }
   }
 
