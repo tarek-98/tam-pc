@@ -12,6 +12,8 @@ const initialState = {
   newestProductsStatus: STATUS.IDLE,
   productsByVendor: [],
   productsByVendorStatus: STATUS.IDLE,
+  sharedProduct: [],
+  sharedProductState: STATUS.IDLE,
 };
 
 const productSlice = createSlice({
@@ -69,6 +71,11 @@ const productSlice = createSlice({
 
       .addCase(fetchProductByVendor.rejected, (state, action) => {
         state.productsByVendorStatus = STATUS.FAILED;
+      })
+
+      .addCase(shareProduct.fulfilled, (state, action) => {
+        state.sharedProduct = action.payload;
+        state.sharedProductState = STATUS.SUCCEEDED;
       });
   },
 });
@@ -115,12 +122,22 @@ export const fetchProductByVendor = createAsyncThunk(
     return data;
   }
 );
+// share product
+export const shareProduct = createAsyncThunk(
+  "shareProduct/fetch",
+  async (productId) => {
+    const response = await fetch(`${API_URL}/products/share/${productId}`);
+    const data = await response.json();
+    return data;
+  }
+);
 
 export const getAllProducts = (state) => state.product.products;
 export const getAllNewestProducts = (state) => state.product.newestProducts;
 export const getProductsByVendor = (state) => state.product.productsByVendor;
 export const getAllProductsStatus = (state) => state.product.productsStatus;
 export const getProductSingle = (state) => state.product.productSingle;
+export const getSharedProduct = (state) => state.product.sharedProduct;
 export const getSingleProductStatus = (state) =>
   state.product.productSingleStatus;
 export default productSlice.reducer;
