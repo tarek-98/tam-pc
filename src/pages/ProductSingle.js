@@ -34,7 +34,7 @@ function ProductSingle() {
   }, []);
 
   useEffect(() => {
-    document.title = `${product.name}`;
+    document.title = `${product.title}`;
   }, []);
 
   return (

@@ -65,11 +65,9 @@ function Vendor() {
   function handleFollowVendor() {
     setVendorFollow(!vendorFollow);
     if (!isFollower) {
-     
       dispatch(followVendor({ VendorId: id, UserId }));
     } else {
       dispatch(unFollowVendor({ VendorId: id, UserId }));
-     
     }
   }
 

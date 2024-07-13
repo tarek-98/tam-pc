@@ -5,7 +5,7 @@ import { FaVolumeXmark } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Comments from "../components/comments/CommentList";
-import { getAllNewestProducts } from "../store/productSlice";
+import { getAllNewestProducts, getProductSingle } from "../store/productSlice";
 
 function Home() {
   const [volume, setVolume] = useState(false);
@@ -13,6 +13,7 @@ function Home() {
   const [comment, setComment] = useState(false);
   const comments = useSelector((state) => state.comments.comments);
   const products = useSelector(getAllNewestProducts);
+  const product = useSelector(getProductSingle);
   useEffect(() => {
     document.title = "TMGGL";
   }, []);
@@ -51,7 +52,7 @@ function Home() {
               )}
             </h2>
           </div>
-          <Comments />
+          <Comments product={product} />
         </div>
       </div>
     </Fragment>

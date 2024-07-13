@@ -15,6 +15,8 @@ import { followVendor } from "../store/vendorsSlice";
 import {
   fetchAsyncProductSingle,
   getAllNewestProducts,
+  getSharedProduct,
+  shareProduct,
 } from "../store/productSlice";
 
 function SlideOverlay({
@@ -28,8 +30,7 @@ function SlideOverlay({
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const comments = useSelector((state) => state.comments.comments);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const sharedProduct = useSelector(getSharedProduct);
 
   // Function to convert likes count to a number
   const parseLikesCount = (count) => {
@@ -71,6 +72,24 @@ function SlideOverlay({
     }
     console.log({ productId, UserId });
   }
+
+  const handleShare = () => {
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+      sharedProduct.link
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard
+      .writeText(sharedProduct.link)
+      .then(() => {
+        alert("Product link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
 
   return (
     <div className="slide-overlay">
@@ -141,17 +160,18 @@ function SlideOverlay({
                 className="item"
                 onClick={() => {
                   setSocial((social) => !social);
+                  dispatch(shareProduct(product.id));
                 }}
               >
                 <FaShare />
                 <span>share</span>
               </div>
               <div className={social ? "social-home" : "social-home-hide"}>
-                <div className="social-conatact-link">
-                  <CiLink />
-                </div>
-                <div className="social-conatact-call">
+                <div className="social-conatact-call" onClick={handleShare}>
                   <FaWhatsapp />
+                </div>
+                <div className="social-conatact-link" onClick={handleCopyLink}>
+                  <CiLink />
                 </div>
               </div>
             </div>

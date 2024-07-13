@@ -9,7 +9,9 @@ import BottomOption from "../BottomOption";
 import { Mousewheel } from "swiper/modules";
 import {
   fetchAsyncNewestProducts,
+  fetchAsyncProductSingle,
   getAllNewestProducts,
+  shareProduct,
 } from "../../store/productSlice";
 import { increaseProductViews, addViewedProduct } from "../../store/sortSlice";
 
@@ -36,12 +38,13 @@ function NewestProduct({
   const handleSlideChange = (swiper) => {
     const activeSlideIndex = swiper.activeIndex;
     const activeProduct = products[activeSlideIndex];
-
     //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
     if (activeProduct) {
       dispatch(increaseProductViews(activeProduct.id));
       dispatch(addViewedProduct(activeProduct.id));
     }
+    dispatch(fetchAsyncProductSingle(activeProduct.id));
+    dispatch(shareProduct(activeProduct.id));
   };
 
   const togglePlay = (index) => {
