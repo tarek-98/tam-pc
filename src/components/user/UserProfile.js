@@ -21,12 +21,14 @@ import Bocket from "../bocket/Bocket";
 import UserAddress from "../user/UserAddress";
 import EditInfo from "../user/EditInfo";
 import { ToastContainer } from "react-bootstrap";
-import { logOut } from "../../store/authSlice";
+import { logOutAsync, setIsAuthenticated } from "../../store/authSlice";
 import Favorite from "../favorite/Favorite";
+import { fetchFavoriteProduct } from "../../store/favorite-slice";
 
 function UserProfile({ socket }) {
+  const dispatch = useDispatch();
   const users = useSelector((state) => state.users);
-  const { userInfo } = useSelector((state) => state.auth);
+  const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const id = 1;
   const [toggleNav, setToggleNav] = useState(0);
@@ -35,6 +37,10 @@ function UserProfile({ socket }) {
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    console.log(userInfo);
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -52,19 +58,20 @@ function UserProfile({ socket }) {
   };
 
   function handleLogout() {
-    dispatch(logOut());
-    // navigate("/login");
+    const UserId = `66754d563efd7b1698104f14`;
+    const Authorization = userInfo.JWT;
+    dispatch(setIsAuthenticated(false));
+    dispatch(logOutAsync(Authorization));
+    localStorage.removeItem("token");
+    dispatch(fetchFavoriteProduct(UserId));
+    navigate("/login");
   }
 
-  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchUsers(id));
+    console.log(isAuthenticated);
     document.title = "Profile";
-  }, []);
-
-  // useEffect(() => {
-  //   console.log(userInfo.ClientID);
-  // }, []);
+  }, [isAuthenticated]);
 
   return (
     <div className="user-profile">

@@ -8,8 +8,10 @@ import { Col, Row } from "react-bootstrap";
 function Following() {
   const vendors = useSelector(getAllVendors);
   const dispatch = useDispatch();
+  const userId = `66754d563efd7b1698104f14`; //test
   useEffect(() => {
-    dispatch(fetchVendors());
+    dispatch(fetchVendors(userId));
+    console.log(vendors);
   }, []);
 
   return (
@@ -21,20 +23,21 @@ function Following() {
         <div className="following-menu">
           <div className="following-menu-item">
             <Row>
-              {vendors.map((vendor) => {
-                return (
-                  <Col lg="12">
-                    <div className="vendor-details">
-                      <Link
-                        to={`/vendorpage/${vendor.id}`}
-                        className="text-dark"
-                      >
-                        {vendor.name}
-                      </Link>
-                    </div>
-                  </Col>
-                );
-              })}
+              {vendors.lenght > 0 &&
+                vendors.map((vendor) => {
+                  return (
+                    <Col lg="12">
+                      <div className="vendor-details">
+                        <Link
+                          to={`/vendorpage/${vendor.id}`}
+                          className="text-dark"
+                        >
+                          {vendor.name}
+                        </Link>
+                      </div>
+                    </Col>
+                  );
+                })}
             </Row>
           </div>
         </div>

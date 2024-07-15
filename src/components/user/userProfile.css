@@ -261,6 +261,10 @@ input:checked+.slider:before {
     color: black;
   }
 
+  .user-info .logout-bu .close {
+    cursor: pointer;
+  }
+
   .user-info .logout-bu .close svg {
     color: red;
     font-size: 30px;

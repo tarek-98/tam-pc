@@ -12,8 +12,8 @@ import axios from "axios";
 
 const Comments = ({ product }) => {
   const dispatch = useDispatch();
-  const comments = useSelector((state) => state.comments.comments);
-  // const comments = product.comments
+  // const comments = useSelector((state) => state.comments.comments);
+  const comments = product.comments;
   const [newComment, setNewComment] = useState("");
   const [replyText, setReplyText] = useState("");
   const [editMode, setEditMode] = useState(null);
@@ -23,7 +23,7 @@ const Comments = ({ product }) => {
   const curretUser = "user2";
 
   useEffect(() => {
-    dispatch(fetchComments());
+    console.log(comments);
   }, [dispatch]);
 
   const handleAddComment = () => {
@@ -79,8 +79,8 @@ const Comments = ({ product }) => {
     return comments
       .filter((comment) => comment.parentId === parentId)
       .map((comment) => (
-        <li key={comment.id} className="comment-item">
-          {editMode === comment.id ? (
+        <li key={comment._id} className="comment-item">
+          {editMode === comment._id ? (
             <Fragment>
               <div className="d-flex align-items-center">
                 <input
@@ -109,7 +109,7 @@ const Comments = ({ product }) => {
                 <FaUser className="fs-4" />
                 <span>userName</span>
               </div>
-              <div className="comment-text">{comment.text}</div>
+              <div className="comment-text">{comment.comment}</div>
               <div>
                 <span className="comment-date">
                   {new Date(comment.createdAt).toLocaleString()}
@@ -117,7 +117,7 @@ const Comments = ({ product }) => {
                 <div className="comment-actions">
                   <button
                     onClick={() => {
-                      setEditMode(comment.id);
+                      setEditMode(comment._id);
                       setEditText(comment.text);
                     }}
                     className="edit-button text-black-50"
@@ -125,13 +125,13 @@ const Comments = ({ product }) => {
                     تعديل
                   </button>
                   <button
-                    onClick={() => handleDeleteComment(comment.id)}
+                    onClick={() => handleDeleteComment(comment._id)}
                     className="delete-button text-black-50"
                   >
                     حذف
                   </button>
                   <button
-                    onClick={() => setReplyMode(comment.id)}
+                    onClick={() => setReplyMode(comment._id)}
                     className="reply-button text-black-50"
                   >
                     رد
@@ -150,7 +150,7 @@ const Comments = ({ product }) => {
                   className="reply-input"
                 />
                 <button
-                  onClick={() => handleAddReply(comment.id)}
+                  onClick={() => handleAddReply(comment._id)}
                   className="reply-button"
                 >
                   رد
@@ -164,7 +164,7 @@ const Comments = ({ product }) => {
               </div>
             </Fragment>
           )}
-          <ul className="comment-list pe-4">{renderComments(comment.id)}</ul>
+          <ul className="comment-list pe-4">{renderComments(comment._id)}</ul>
         </li>
       ));
   };

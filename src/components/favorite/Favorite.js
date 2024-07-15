@@ -4,36 +4,41 @@ import "swiper/css";
 import { useDispatch, useSelector } from "react-redux";
 import vid2 from "../../videos/Download.mp4";
 import {
-  fetchAsyncNewestProducts,
-  getAllNewestProducts,
-} from "../../store/productSlice";
-import { delFavorite, fetchFavoriteProduct } from "../../store/favorite-slice";
+  delFavorite,
+  fetchFavoriteProduct,
+  getAllFavorites,
+} from "../../store/favorite-slice";
 import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 
 function Favorite() {
   const dispatch = useDispatch();
-  const { newestProductsStatus } = useSelector((state) => state.product);
-  const products = useSelector(getAllNewestProducts);
+  const { status } = useSelector((state) => state.favorite);
+  const favorites = useSelector(getAllFavorites);
   const viewedProducts = useSelector(
     (state) => state.sortedProducts.viewedProducts
   );
 
   const [currentVideo, setCurrentVideo] = useState(null);
   const videoRef = useRef(null);
-  const UserId = 5; //test
+  const UserId = `66754d563efd7b1698104f14`; //test
 
   useEffect(() => {
-    dispatch(fetchFavoriteProduct());
-  }, []);
-
-  useEffect(() => {
-    dispatch(fetchAsyncNewestProducts());
+    dispatch(fetchFavoriteProduct(UserId));
   }, []);
 
   function handleDelFav({ productId, UserId }) {
     dispatch(delFavorite({ productId, UserId }));
+    dispatch(fetchFavoriteProduct(UserId));
+  }
+
+  if (favorites.length === 0) {
+    return (
+      <Col lg="12" className="d-flex justify-content-center align-items-center">
+        <h3>لا يوجد منتجات مفضلة</h3>
+      </Col>
+    );
   }
 
   return (
@@ -41,7 +46,7 @@ function Favorite() {
       <div className="container">
         <Col lg="12" className="mb-3">
           <Row className="">
-            {newestProductsStatus === "loading" ? (
+            {status === "loading" ? (
               <Fragment>
                 <div className="d-flex align-items-center justify-content-center">
                   <CircularProgress />
@@ -49,17 +54,23 @@ function Favorite() {
               </Fragment>
             ) : (
               <Fragment>
-                {newestProductsStatus === "failed" ? (
+                {status === "failed" ? (
                   <h1>Failed to load Products</h1>
                 ) : (
                   <Fragment>
-                    {products.map((product, index) => {
+                    {favorites.map((product, index) => {
                       return (
                         <Fragment>
-                          <Col lg="4" sm="12" xs="12" className="p-0 p-1 mb-3">
+                          <Col
+                            lg="4"
+                            sm="12"
+                            xs="12"
+                            className="p-0 p-1 mb-3"
+                            key={index}
+                          >
                             <div className="vendor-products-item">
                               <Link
-                                to={`/product/${product.id}`}
+                                to={`/product/${product._id}`}
                                 className="text-decoration-none"
                               >
                                 <div className="image">
@@ -83,7 +94,7 @@ function Favorite() {
                                 className="del-fav"
                                 onClick={() =>
                                   handleDelFav({
-                                    productId: product.id,
+                                    productId: product._id,
                                     UserId,
                                   })
                                 }

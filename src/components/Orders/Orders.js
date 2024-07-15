@@ -22,7 +22,7 @@ function Orders() {
           {orders.map((order) => {
             return (
               <Fragment>
-                <Col lg="4" sm="12" xs="12" className="p-2 mb-4">
+                <Col lg="4" sm="12" xs="12" className="p-2 mb-4" key={order.id}>
                   <div className="order-card">
                     <div className="order-card-header d-flex justify-content-between align-items-center mb-3">
                       <h6 className="order-card-title mb-0">

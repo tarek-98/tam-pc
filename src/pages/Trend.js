@@ -4,23 +4,18 @@ import { FaVolumeXmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Comments from "../components/comments/CommentList";
-import NewestProduct from "../components/products/NewestProduct";
-import {
-  fetchAsyncNewestProducts,
-  getAllNewestProducts,
-  getProductSingle,
-} from "../store/productSlice";
+import { fetchAsyncTrendProducts, getAllTrendProducts, getProductSingle } from "../store/productSlice";
 import Swal from "sweetalert2";
 import { addToCart } from "../store/cartSlice";
-import { fetchShippingMethods } from "../store/shippingSlice";
+import TrendProducts from "../components/products/TrendProducts";
 
-function NewestProducts() {
+function Trend() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
-  const [comment, setComment] = useState(false);
   const [info, setInfo] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
-  const products = useSelector(getAllNewestProducts);
+  const [comment, setComment] = useState(false);
+  const products = useSelector(getAllTrendProducts);
   const productData = useSelector(getProductSingle);
   const product = productData.product;
   const comments = product ? product.comments : null;
@@ -34,7 +29,7 @@ function NewestProducts() {
     console.log(product);
   }, []);
   useEffect(() => {
-    dispatch(fetchAsyncNewestProducts());
+    dispatch(fetchAsyncTrendProducts());
   }, []);
 
   const increaseQty = () => {
@@ -94,7 +89,7 @@ function NewestProducts() {
   return (
     <Fragment>
       <Navbar />
-      <NewestProduct
+      <TrendProducts
         sound={sound}
         comment={comment}
         info={info}
@@ -114,6 +109,7 @@ function NewestProducts() {
         <FaVolumeXmark />
         <span className="">Unmute</span>
       </div>
+
       {product && (
         <div className={comment ? "comment-wrapper" : "comment-wrapper-hide"}>
           <div className="comment-wrapper-overlay"></div>
@@ -196,7 +192,8 @@ function NewestProducts() {
                         <div className="new-price ms-3">
                           <span>السعر : </span>
                           <span>
-                            {(product.price + product.price * 0.15) * quantity}
+                            {(discountedPrice + discountedPrice * 0.15) *
+                              quantity}
                             ر.س
                           </span>
                         </div>
@@ -286,4 +283,4 @@ function NewestProducts() {
   );
 }
 
-export default NewestProducts;
+export default Trend;

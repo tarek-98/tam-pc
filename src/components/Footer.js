@@ -12,6 +12,7 @@ import { FiMinus } from "react-icons/fi";
 
 function Footer() {
   const carts = useSelector(getAllCarts);
+  const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
 
   const [buy, setBuy] = useState(false);
   const [sell, setSell] = useState(false);
@@ -29,7 +30,10 @@ function Footer() {
             </Link>
           </div>
           <div className="tab-container pop">
-            <Link to="/inbox" className="tab-link">
+            <Link
+              to={isAuthenticated ? "/inbox" : "/login"}
+              className="tab-link"
+            >
               <MdOutlineMoveToInbox className="tab-icon" />
               <span
                 className={carts.length <= 0 ? "cart-num-hide" : "cart-num"}
@@ -40,7 +44,10 @@ function Footer() {
             </Link>
           </div>
           <div className="tab-container pop">
-            <Link to="/cart" className="tab-link">
+            <Link
+              to={isAuthenticated ? "/cart" : "/login"}
+              className="tab-link"
+            >
               <FaCartArrowDown className="tab-icon" />
               <span
                 className={carts.length <= 0 ? "cart-num-hide" : "cart-num"}
@@ -51,7 +58,10 @@ function Footer() {
             </Link>
           </div>
           <div className="tab-container">
-            <Link to="/profile" className="tab-link">
+            <Link
+              to={isAuthenticated ? "/profile" : "/login"}
+              className="tab-link"
+            >
               <FaRegUserCircle className="tab-icon" />
               <div className="tab-text">حسابي</div>
             </Link>

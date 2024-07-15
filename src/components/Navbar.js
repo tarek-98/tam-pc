@@ -2,8 +2,10 @@ import React from "react";
 import "./navbar.css";
 import { Link } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
+import { useSelector } from "react-redux";
 
 function Navbar() {
+  const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   return (
     <div className="page-header">
       <div className="nav-container w-100 ms-2 me-2">
@@ -15,13 +17,16 @@ function Navbar() {
             <CiSearch className="me-1" />
             <span>البحث</span>
           </Link>
-          <Link className="nav-item">
+          <Link className="nav-item" to="/trend">
             <span>الترند #</span>
           </Link>
           <Link to="/newest" className="nav-item">
             <span>المضاف حديثا</span>
           </Link>
-          <Link to="/following" className="nav-item">
+          <Link
+            to={isAuthenticated ? "/following" : "/login"}
+            className="nav-item"
+          >
             <span>اتابعهم</span>
           </Link>
         </div>

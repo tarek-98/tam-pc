@@ -8,13 +8,15 @@ import { RiChatForwardLine } from "react-icons/ri";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
 import { CiLink } from "react-icons/ci";
-import { fetchComments } from "../store/commentSlice";
-import { IoIosCloseCircleOutline } from "react-icons/io";
-import { addToFavorite, delFavorite } from "../store/favorite-slice";
-import { followVendor } from "../store/vendorsSlice";
+import {
+  addToFavorite,
+  delFavorite,
+  fetchFavoriteProduct,
+  getAllFavorites,
+} from "../store/favorite-slice";
+import { fetchVendors, followVendor } from "../store/vendorsSlice";
 import {
   fetchAsyncProductSingle,
-  getAllNewestProducts,
   getSharedProduct,
   shareProduct,
 } from "../store/productSlice";
@@ -30,7 +32,18 @@ function SlideOverlay({
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   const sharedProduct = useSelector(getSharedProduct);
+  const productId = product._id;
+  const UserId = `66754d563efd7b1698104f14`;
+  const VendorId = product.idVendor;
+
+  useEffect(() => {
+    dispatch(fetchAsyncProductSingle(product._id));
+    if (isAuthenticated) {
+      dispatch(fetchFavoriteProduct(UserId));
+    }
+  }, [dispatch]);
 
   // Function to convert likes count to a number
   const parseLikesCount = (count) => {
@@ -51,24 +64,23 @@ function SlideOverlay({
     return count;
   };
 
-  const productId = product.id;
-  const UserId = product.seller.id;
-  const VendorId = product.seller.id;
-
   // const isFavorite = favorites.some((fav) => fav.videoId === videoId); for favorite
-  const products = useSelector(getAllNewestProducts); // will be favorites products
-  const isFavorite = products.some((fav) => fav.id === product.id); //test fav
-  const isFollower = products.some((follow) => follow.id === product.seller.id); //test follower
+  const favorites = useSelector(getAllFavorites); // will be favorites products
+  const isFavorite = favorites.some((fav) => fav._id === product._id); //test fav
+  const isFollower = favorites.some((follow) => follow._id === product._id); //test follower
 
   const handIconClick = () => {
     dispatch(followVendor({ VendorId, UserId }));
+    dispatch(fetchVendors(UserId));
   };
 
   function handleAddFavorite() {
     if (isFavorite) {
       dispatch(delFavorite({ productId, UserId }));
+      dispatch(fetchFavoriteProduct(UserId));
     } else {
       dispatch(addToFavorite({ productId, UserId }));
+      dispatch(fetchFavoriteProduct(UserId));
     }
     console.log({ productId, UserId });
   }
@@ -97,11 +109,18 @@ function SlideOverlay({
         <div className="left-side">
           <div className="left-side-content">
             <div className="vendor-logo">
-              <Link className="vend-in" to={`/vendorpage/${product.id}`}></Link>
+              <Link
+                className="vend-in"
+                to={`/vendorpage/${product.idVendor}`}
+              ></Link>
               <div className="wrapper">
                 <div className="follow-plus">
                   <GoPlus
-                    className={isFollower ? "icon-plus" : "icon-plus-hide"}
+                    className={
+                      isFollower && isAuthenticated
+                        ? "icon-plus-hide"
+                        : "icon-plus"
+                    }
                     onClick={handIconClick}
                   />
                 </div>
@@ -111,13 +130,13 @@ function SlideOverlay({
               <div className="item">
                 <FaHeart
                   style={{
-                    color: isFavorite ? "#FF0000" : "white",
+                    color: isFavorite && isAuthenticated ? "#FF0000" : "white",
                   }}
                   onClick={() => handleAddFavorite()}
                 />
                 <span>
                   {formatLikesCount(
-                    parseLikesCount(product.unit_price) + (isFavorite ? 1 : 0)
+                    parseLikesCount(product.price) + (isFavorite ? 1 : 0)
                   )}
                 </span>
               </div>
@@ -129,11 +148,11 @@ function SlideOverlay({
                 onClick={() => {
                   setComment((comment) => !comment);
                   setSocial(false);
-                  dispatch(fetchAsyncProductSingle(product.id));
+                  dispatch(fetchAsyncProductSingle(product._id));
                 }}
               >
                 <FaCommentDots />
-                <span>80</span>
+                <span>{product.comments.length}</span>
               </div>
             </div>
             <div className="smart-wrapper">
@@ -148,7 +167,7 @@ function SlideOverlay({
                 onClick={() => {
                   setSocial(false);
                   setInfo(true);
-                  dispatch(fetchAsyncProductSingle(product.id));
+                  dispatch(fetchAsyncProductSingle(product._id));
                 }}
               >
                 <HiMiniBars3 />
@@ -160,7 +179,7 @@ function SlideOverlay({
                 className="item"
                 onClick={() => {
                   setSocial((social) => !social);
-                  dispatch(shareProduct(product.id));
+                  dispatch(shareProduct(product._id));
                 }}
               >
                 <FaShare />

@@ -1,21 +1,21 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import "./product.css";
+import "../product.css";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAsyncProducts,
-  fetchAsyncProductSingle,
-  getAllProductsStatus,
-  shareProduct,
-} from "../store/productSlice";
-import SlideOverlay from "./SlideOverlay";
-import vid2 from "../videos/Download.mp4";
-import BottomOption from "./BottomOption";
+import SlideOverlay from "../SlideOverlay";
+import vid2 from "../../videos/Download.mp4";
+import BottomOption from "../BottomOption";
 import { Mousewheel } from "swiper/modules";
-import { increaseProductViews, addViewedProduct } from "../store/sortSlice";
+import {
+  fetchAsyncProductSingle,
+  fetchAsyncTrendProducts,
+  getAllTrendProducts,
+  shareProduct,
+} from "../../store/productSlice";
+import { increaseProductViews, addViewedProduct } from "../../store/sortSlice";
 
-function Product({
+function TrendProducts({
   sound,
   comment,
   setComment,
@@ -25,19 +25,28 @@ function Product({
   addProduct,
   setAddProduct,
 }) {
-  const productsStatus = useSelector(getAllProductsStatus);
   const [social, setSocial] = useState(false);
   const dispatch = useDispatch();
   const videoRef = useRef(null);
-  const viewedProducts = useSelector(
-    (state) => state.sortedProducts.viewedProducts
-  );
 
   const [currentVideo, setCurrentVideo] = useState(null);
+  const productsStatus = useSelector(getAllTrendProducts);
 
   useEffect(() => {
-    dispatch(fetchAsyncProducts());
+    dispatch(fetchAsyncTrendProducts());
   }, []);
+
+  const handleSlideChange = (swiper) => {
+    const activeSlideIndex = swiper.activeIndex;
+    const activeProduct = products[activeSlideIndex];
+    //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
+    if (activeProduct) {
+      dispatch(increaseProductViews(activeProduct._id));
+      dispatch(addViewedProduct(activeProduct._id));
+    }
+    dispatch(fetchAsyncProductSingle(activeProduct._id));
+    dispatch(shareProduct(activeProduct._id));
+  };
 
   const togglePlay = (index) => {
     if (currentVideo === index) {
@@ -58,19 +67,6 @@ function Product({
     }
   };
 
-  const handleSlideChange = (swiper) => {
-    const activeSlideIndex = swiper.activeIndex;
-    const activeProduct = products[activeSlideIndex];
-    //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
-    if (activeProduct) {
-      dispatch(increaseProductViews(activeProduct._id));
-      dispatch(addViewedProduct(activeProduct._id));
-    }
-    dispatch(fetchAsyncProductSingle(activeProduct._id));
-    dispatch(shareProduct(activeProduct._id));
-    console.log(activeProduct._id);
-  };
-
   return (
     <div className="video-card">
       <Swiper
@@ -78,9 +74,9 @@ function Product({
         modules={[Mousewheel]}
         mousewheel={{ forceToAxis: true }}
         className="mySwiper"
+        onSlideChange={handleSlideChange}
         allowSlideNext={addProduct || comment || info ? false : true}
         allowSlidePrev={addProduct || comment || info ? false : true}
-        onSlideChange={handleSlideChange}
         onSlideChangeTransitionStart={function () {
           var videos = document.querySelectorAll("video");
           Array.prototype.forEach.call(videos, function (video) {
@@ -121,7 +117,6 @@ function Product({
                       <div className="plyer-container">
                         <div>
                           <video
-                            // poster={`${img_url}/${product.images[0]}`}
                             id={index}
                             src={vid2}
                             className="react-player"
@@ -166,4 +161,4 @@ function Product({
   );
 }
 
-export default Product;
+export default TrendProducts;

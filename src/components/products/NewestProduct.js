@@ -10,7 +10,7 @@ import { Mousewheel } from "swiper/modules";
 import {
   fetchAsyncNewestProducts,
   fetchAsyncProductSingle,
-  getAllNewestProducts,
+  getNewestProductsStatus,
   shareProduct,
 } from "../../store/productSlice";
 import { increaseProductViews, addViewedProduct } from "../../store/sortSlice";
@@ -30,6 +30,7 @@ function NewestProduct({
   const videoRef = useRef(null);
 
   const [currentVideo, setCurrentVideo] = useState(null);
+  const productsStatus = useSelector(getNewestProductsStatus);
 
   useEffect(() => {
     dispatch(fetchAsyncNewestProducts());
@@ -40,11 +41,11 @@ function NewestProduct({
     const activeProduct = products[activeSlideIndex];
     //  if (activeProduct && !viewedProducts[activeProduct.id]) to once view for product
     if (activeProduct) {
-      dispatch(increaseProductViews(activeProduct.id));
-      dispatch(addViewedProduct(activeProduct.id));
+      dispatch(increaseProductViews(activeProduct._id));
+      dispatch(addViewedProduct(activeProduct._id));
     }
-    dispatch(fetchAsyncProductSingle(activeProduct.id));
-    dispatch(shareProduct(activeProduct.id));
+    dispatch(fetchAsyncProductSingle(activeProduct._id));
+    dispatch(shareProduct(activeProduct._id));
   };
 
   const togglePlay = (index) => {
@@ -98,11 +99,11 @@ function NewestProduct({
           setInfo(false);
         }}
       >
-        {products.status === "loading" ? (
+        {productsStatus === "loading" ? (
           <div className="bg-white text-white w-100 h-100">
             Loading products...
           </div>
-        ) : products.status === "failed" ? (
+        ) : productsStatus === "failed" ? (
           <div className="bg-white text-white w-100 h-100">
             Error: {products.error}
           </div>
@@ -124,7 +125,11 @@ function NewestProduct({
                             loop
                             playsInline={true}
                             ref={videoRef}
-                            onPlay={() => setCurrentVideo(index)}
+                            onPlay={() => {
+                              setCurrentVideo(index);
+                              dispatch(fetchAsyncProductSingle(product._id));
+                              dispatch(shareProduct(product._id));
+                            }}
                             onClick={() => togglePlay(index)}
                           ></video>
                         </div>

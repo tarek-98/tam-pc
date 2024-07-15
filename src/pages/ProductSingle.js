@@ -34,7 +34,8 @@ function ProductSingle() {
   }, []);
 
   useEffect(() => {
-    document.title = `${product.title}`;
+    console.log(product);
+    document.title = `${product.product.name}`;
   }, []);
 
   return (
@@ -43,7 +44,7 @@ function ProductSingle() {
         <div className="plyer-container">
           <div>
             <video
-              id={product.id}
+              id={id}
               src={vid}
               className="react-player"
               autoPlay
@@ -55,8 +56,8 @@ function ProductSingle() {
             ></video>
           </div>
         </div>
-        {/*<SlideOverlay product={product} />
-        <BottomOption product={product} />*/}
+        <SlideOverlay product={product.product} />
+        <BottomOption product={product.product} />
       </div>
       <div
         className={volume ? "volume-hide" : "volume-single"}

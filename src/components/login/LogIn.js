@@ -16,10 +16,10 @@ const Login = () => {
   const saudiPhoneNumberRegex = /^0[0-9]{9}$/;
 
   useEffect(() => {
-    if (status === "succeeded") {
+    if (status === "logging in succeeded") {
       navigate("/profile");
     }
-  }, []);
+  }, [status]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
