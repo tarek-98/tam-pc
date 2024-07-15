@@ -36,7 +36,7 @@ const addressSlice = createSlice({
   reducers: {
     DefaultAddress: (state, action) => {
       state.defaultAddress = action.payload;
-      storeInLocalStorage(state.defaultAddress)
+      storeInLocalStorage(state.defaultAddress);
     },
   },
   extraReducers: (builder) => {

@@ -37,6 +37,7 @@ export const loginAsync = createAsyncThunk(
       const response = await axios.post(
         `${API_URL}/client/login/${email}/${pass}`
       );
+      localStorage.setItem("token", response.data.JWT);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -47,15 +48,11 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/vendor/new-vendor-request`,
-        userData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_URL}/client/sign-up`, userData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -63,19 +60,22 @@ export const registerUser = createAsyncThunk(
   }
 );
 // Async thunk for user login
-export const logOut = createAsyncThunk(
-  "auth/logOut",
-  async ({ rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_URL}/client/logout`);
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+const Authorization = localStorage.getItem("token");
+export const logOutAsync = createAsyncThunk("auth/logOutAsync", async () => {
+  // Example of access request and obtaining token
+  fetch(`${API_URL}/client/logout`, {
+    method: "POST",
+    headers: {
+      Authorization: `${Authorization}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => console.error("Error logging in:", error));
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -86,6 +86,8 @@ const authSlice = createSlice({
     error: null,
     isNewUser: false,
     userInfo: null,
+    token: localStorage.getItem("token") || null,
+    isAuthenticated: false,
   },
   reducers: {
     setPhoneNumber: (state, action) => {
@@ -93,6 +95,9 @@ const authSlice = createSlice({
     },
     setOtp: (state, action) => {
       state.otp = action.payload;
+    },
+    setIsAuthenticated: (state, action) => {
+      state.isAuthenticated = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -123,26 +128,46 @@ const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = "logging in succeeded";
+        state.isAuthenticated = true;
         state.userInfo = action.payload;
+        state.token = action.payload.JWT;
+        localStorage.setItem("token", action.payload.JWT);
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(logOut.pending, (state) => {
+      .addCase(logOutAsync.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(logOut.fulfilled, (state, action) => {
+      .addCase(logOutAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.isAuthenticated = false;
+        state.userInfo = null;
+        state.token = null;
       })
-      .addCase(logOut.rejected, (state, action) => {
+      .addCase(logOutAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.isAuthenticated = true;
+        state.userInfo = action.payload;
+        state.token = action.payload.JWT;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
   },
 });
 
-export const { setPhoneNumber, setOtp } = authSlice.actions;
+export const isAuthenticated = (state) => state.auth.isAuthenticated;
+export const { setPhone, setOtp, setIsAuthenticated } = authSlice.actions;
 
 export default authSlice.reducer;

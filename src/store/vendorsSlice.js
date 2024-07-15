@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://tager.onrender.com";
+const API_URL = "https://tager.onrender.com";
+const Authorization = localStorage.getItem("token");
 
 const initialState = {
   vendors: [],
@@ -11,8 +12,13 @@ const initialState = {
 
 export const fetchVendors = createAsyncThunk(
   "vendors/fetchVendors",
-  async () => {
-    const res = await fetch("https://jsonplaceholder.typicode.com/users");
+  async (userId) => {
+    const res = await fetch(`${API_URL}/client/all-followers/${userId}`, {
+      headers: {
+        Authorization: `${Authorization}`,
+        "Content-Type": "application/json",
+      },
+    });
     const data = await res.json();
     return data;
   }
@@ -29,19 +35,20 @@ export const fetchSingleVendor = createAsyncThunk(
 //follow vendor
 export const followVendor = createAsyncThunk(
   "vendors/followVendor",
-  async ({ VendorId, UserId }, { rejectWithValue }) => {
-    try {
-      const response = await axios.patch(
-        `${API_URL}/client/follow-vendor/${VendorId}/${UserId}`
-      );
-      console.log(response.data);
-      console.log(UserId, VendorId);
-      return response.data;
-    } catch (error) {
-      console.log(error.response.data);
-      console.log(UserId, VendorId);
-      return rejectWithValue(error.response.data);
-    }
+  async ({ VendorId, UserId }) => {
+    fetch(`${API_URL}/client/follow-vendor/${VendorId}/${UserId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `${Authorization}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .catch((error) => console.error("Error logging in:", error));
   }
 );
 

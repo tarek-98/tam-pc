@@ -37,6 +37,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />}></Route>
                 <Route path="/newest" element={<NewestProducts />}></Route>
+                <Route path="/trend" element={<NewestProducts />}></Route>
                 <Route path="/following" element={<Following />}></Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/verify-otp" element={<VerifyOtp />} />

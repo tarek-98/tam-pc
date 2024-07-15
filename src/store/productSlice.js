@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUS } from "../utils/status";
+import axios from "axios";
 
-const API_URL = "http://tager.onrender.com";
+const API_URL = "https://tager.onrender.com";
 
 const initialState = {
   products: [],
@@ -10,6 +11,8 @@ const initialState = {
   productSingleStatus: STATUS.IDLE,
   newestProducts: [],
   newestProductsStatus: STATUS.IDLE,
+  trendProducts: [],
+  trendProductsStatus: STATUS.IDLE,
   productsByVendor: [],
   productsByVendorStatus: STATUS.IDLE,
   sharedProduct: [],
@@ -47,6 +50,7 @@ const productSlice = createSlice({
       .addCase(fetchAsyncProductSingle.rejected, (state, action) => {
         state.productSingleStatus = STATUS.FAILED;
       })
+
       .addCase(fetchAsyncNewestProducts.pending, (state, action) => {
         state.newestProductsStatus = STATUS.LOADING;
       })
@@ -58,6 +62,18 @@ const productSlice = createSlice({
 
       .addCase(fetchAsyncNewestProducts.rejected, (state, action) => {
         state.newestProductsStatus = STATUS.FAILED;
+      })
+      .addCase(fetchAsyncTrendProducts.pending, (state, action) => {
+        state.trendProductsStatus = STATUS.LOADING;
+      })
+
+      .addCase(fetchAsyncTrendProducts.fulfilled, (state, action) => {
+        state.trendProducts = action.payload;
+        state.trendProductsStatus = STATUS.SUCCEEDED;
+      })
+
+      .addCase(fetchAsyncTrendProducts.rejected, (state, action) => {
+        state.trendProductsStatus = STATUS.FAILED;
       })
 
       .addCase(fetchProductByVendor.pending, (state, action) => {
@@ -84,22 +100,28 @@ const productSlice = createSlice({
 export const fetchAsyncProducts = createAsyncThunk(
   "products/fetch",
   async () => {
-    const response = await fetch(
-      // "https://gomla-wbs.el-programmer.com/api/products/latest"
-      `${API_URL}/products/getall`
-    );
-    const data = await response.json();
-    return data.products;
+    const response = await axios.get(`${API_URL}/products/getall`, {
+      headers: {
+        authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0aW1lIjoiV2VkIE1heSAyMiAyMDI0IDE5OjM5OjI5IEdNVCswMzAwICjYqtmI2YLZitiqINi02LHZgiDYo9mI2LHZiNio2Kcg2KfZhNi12YrZgdmKKSIsInVzZXJJZCI6IjY2NGEzNTQ2Njk4NTVkNmM3OGJhZjEyNiIsImlhdCI6MTcxNjM5NTk2OX0.MgCtXcPKZQwFHNmZ_eesNTi4oqDxCg4-kulBDIY8kXA`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   }
 );
+
 export const fetchAsyncNewestProducts = createAsyncThunk(
   "newestProducts/fetch",
   async () => {
-    const response = await fetch(
-      "https://gomla-wbs.el-programmer.com/api/products/latest"
-    );
-    const data = await response.json();
-    return data.products;
+    const response = await axios.get(`${API_URL}/products/sortedProducts`);
+    return response.data;
+  }
+);
+export const fetchAsyncTrendProducts = createAsyncThunk(
+  "TrendProducts/fetch",
+  async () => {
+    const response = await axios.get(`${API_URL}/client/all-trending-products`);
+    return response.data;
   }
 );
 
@@ -108,11 +130,14 @@ export const fetchAsyncProductSingle = createAsyncThunk(
   "product-single/fetch",
   async (id) => {
     // const response = await fetch(`${API_URL}/products/product/${id}`);
-    const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+    const response = await fetch(
+      `${API_URL}/client/view-productByProductId/${id}`
+    );
     const data = await response.json();
     return data;
   }
 );
+
 // getting the single product data also
 export const fetchProductByVendor = createAsyncThunk(
   "fetchProductByVendor/fetch",
@@ -134,6 +159,11 @@ export const shareProduct = createAsyncThunk(
 
 export const getAllProducts = (state) => state.product.products;
 export const getAllNewestProducts = (state) => state.product.newestProducts;
+export const getNewestProductsStatus = (state) =>
+  state.product.newestProductsStatus;
+export const getAllTrendProducts = (state) => state.product.trendProducts;
+export const getTrendProductsStatus = (state) =>
+  state.product.trendProductsStatus;
 export const getProductsByVendor = (state) => state.product.productsByVendor;
 export const getAllProductsStatus = (state) => state.product.productsStatus;
 export const getProductSingle = (state) => state.product.productSingle;

@@ -1,40 +1,45 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://tager.onrender.com";
+const API_URL = "https://tager.onrender.com";
+const Authorization = localStorage.getItem("token");
 
 export const fetchFavoriteProduct = createAsyncThunk(
   "favorite/fetchFavoriteProduct",
   async (UserId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${API_URL}/client/all-favourite-products/${UserId}`
+        `${API_URL}/client/all-favourite-products/${UserId}`,
+        {
+          headers: {
+            Authorization: `${Authorization}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-      console.log(response.data);
-      console.log(UserId);
       return response.data;
     } catch (error) {
-      console.log(error.response.data);
-      console.log(UserId);
       return rejectWithValue(error.response.data);
     }
   }
 );
+
 export const addToFavorite = createAsyncThunk(
   "favorite/addToFavorite",
-  async ({ productId, UserId }, { rejectWithValue }) => {
-    try {
-      const response = await axios.patch(
-        `${API_URL}/client/add-favourite-product/${productId}/${UserId}`
-      );
-      console.log(response.data);
-      console.log(UserId, productId);
-      return response.data;
-    } catch (error) {
-      console.log(error.response.data);
-      console.log(UserId, productId);
-      return rejectWithValue(error.response.data);
-    }
+  async ({ productId, UserId }) => {
+    fetch(`${API_URL}/client/add-favourite-product/${productId}/${UserId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `${Authorization}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.error("Error logging in:");
+        return data;
+      })
+      .catch((error) => console.error("Error logging in:", error));
   }
 );
 export const delFavorite = createAsyncThunk(
@@ -42,7 +47,13 @@ export const delFavorite = createAsyncThunk(
   async ({ productId, UserId }, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `${API_URL}/client/delete-favourite-product/${productId}/${UserId}`
+        `${API_URL}/client/delete-favourite-product/${productId}/${UserId}`,
+        {
+          headers: {
+            Authorization: `${Authorization}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
       console.log(response.data);
       console.log(UserId, productId);
@@ -61,6 +72,7 @@ const initialState = {
   itemsCount: 0,
   totalAmount: 0,
   isCartMessageOn: false,
+  status: "idle",
 };
 
 const favSlice = createSlice({
@@ -76,7 +88,8 @@ const favSlice = createSlice({
       })
       .addCase(fetchFavoriteProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.favorites = action.payload;
+        state.favorites = action.payload.productDetails;
+        state.status = "favorite Product successed";
       })
       .addCase(fetchFavoriteProduct.rejected, (state, action) => {
         state.loading = false;
