@@ -69,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "circular-dependency-plugin": "^5.2.2",
     "react-router-dom": "^6.23.1"
   }
 }
