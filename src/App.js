@@ -21,10 +21,11 @@ import Bocket from "./components/bocket/Bocket";
 import Vendor from "./components/vendor/Vendor";
 import Inbox from "./components/chat/Inbox";
 import Notifications from "./components/chat/Notifications";
-import Chat from "./components/chat/Chat";
 import Orders from "./components/Orders/Orders";
 import Favorite from "./components/favorite/Favorite";
 import OrderInfo from "./components/Orders/OrderInfo";
+import ProductsTrend from "./pages/ProductsTrend";
+import Chat from "./components/chat/Chat";
 
 function App() {
   return (
@@ -37,7 +38,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />}></Route>
                 <Route path="/newest" element={<NewestProducts />}></Route>
-                <Route path="/trend" element={<NewestProducts />}></Route>
+                <Route path="/trend" element={<ProductsTrend />}></Route>
                 <Route path="/following" element={<Following />}></Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/verify-otp" element={<VerifyOtp />} />

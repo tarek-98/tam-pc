@@ -2,7 +2,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://tager.onrender.com";
+const API_URL = "https://tager.onrender.com";
+const Authorization = localStorage.getItem("token");
 
 const initialState = {
   reviews: [],
@@ -17,7 +18,7 @@ export const fetchReviews = createAsyncThunk(
       const response = await axios.get(
         `${API_URL}/client/view-vendor-reviews/${VendorId}`
       );
-      console.log(response.data);
+      console.log(response.data.data);
       console.log(VendorId);
       return response.data;
     } catch (error) {
@@ -31,12 +32,22 @@ export const fetchReviews = createAsyncThunk(
 export const submitReview = createAsyncThunk(
   "reviews/submitReview",
   async ({ vendorId, userId, rating, reviewText }) => {
-    const response = await axios.post(`${API_URL}/client/add-vendor-review`, {
-      vendorId,
-      userId,
-      rating,
-      reviewText,
-    });
+    const response = await axios.patch(
+      `${API_URL}/client/add-vendor-review`,
+      {
+        vendorId,
+        userId,
+        rating,
+        reviewText,
+      },
+      {
+        headers: {
+          Authorization: `${Authorization}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response.data);
     return response.data;
   }
 );
@@ -63,7 +74,6 @@ const reviewSlice = createSlice({
       })
       .addCase(submitReview.fulfilled, (state, action) => {
         state.loading = false;
-        state.reviews.push(action.payload);
       })
       .addCase(submitReview.rejected, (state, action) => {
         state.loading = false;

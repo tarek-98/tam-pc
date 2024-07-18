@@ -36,7 +36,7 @@ export const addToFavorite = createAsyncThunk(
     })
       .then((response) => response.json())
       .then((data) => {
-        console.error("Error logging in:");
+        console.log("add to fav");
         return data;
       })
       .catch((error) => console.error("Error logging in:", error));

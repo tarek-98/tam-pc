@@ -23,6 +23,20 @@ export const fetchVendors = createAsyncThunk(
     return data;
   }
 );
+export const fetchFollowers = createAsyncThunk(
+  "vendors/fetchFollowers",
+  async (userId) => {
+    const res = await fetch(`${API_URL}/client/all-followers/${userId}`, {
+      headers: {
+        Authorization: `${Authorization}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    return data;
+  }
+);
+
 export const fetchSingleVendor = createAsyncThunk(
   "vendors/fetchSingleVendor",
   async (id) => {
@@ -112,9 +126,20 @@ export const vendorsSlice = createSlice({
       })
       .addCase(unFollowVendor.fulfilled, (state, action) => {
         state.status = "succeded";
-        state.followers = action.payload;
+        // state.followers = action.payload;
       })
       .addCase(unFollowVendor.rejected, (state, action) => {
+        state.status = "failed";
+      })
+
+      .addCase(fetchFollowers.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchFollowers.fulfilled, (state, action) => {
+        state.status = "succeded";
+        state.followers = action.payload;
+      })
+      .addCase(fetchFollowers.rejected, (state, action) => {
         state.status = "failed";
       });
   },
@@ -122,5 +147,6 @@ export const vendorsSlice = createSlice({
 
 export const {} = vendorsSlice.actions;
 export const getAllVendors = (state) => state.vendors.vendors;
+export const getAllFollowers = (state) => state.vendors.followers;
 export const getSingleVendor = (state) => state.vendors.singleVendor;
 export default vendorsSlice.reducer;
