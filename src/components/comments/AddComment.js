@@ -34,7 +34,7 @@ const AddComment = ({ product }) => {
         type="button"
         onClick={onSaveCommentClicked}
         className="comment-button"
-        disabled={!isAuthenticated}
+        disabled={!isAuthenticated || comment === ""}
       >
         اضف
       </button>

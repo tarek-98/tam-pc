@@ -1,7 +1,7 @@
 // src/features/comments/Comments.js
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteComment } from "../../store/commentSlice";
+import { deleteComment, delReply } from "../../store/commentSlice";
 import "./comments.css";
 import AddComment from "./AddComment";
 import EditComment from "./EditComment";
@@ -35,7 +35,7 @@ const Comments = ({ product }) => {
       <Fragment>
         <div className="d-flex align-items-center gap-2">
           <FaUser className="fs-4" />
-          <span>userName</span>
+          <span className="text-black-50">userName</span>
         </div>
         <div className="comment-text mb-0">{comment.comment}</div>
         <div>
@@ -79,21 +79,48 @@ const Comments = ({ product }) => {
           </div>
         </div>
         {comment.replies.length > 0 && (
-          <div>
-            <p onClick={() => toggleReplies(comment._id)}>
-              {visibleReplies[comment.id]
-                ? "Hide Replies"
-                : `Show ${comment.replies.length} Replies`}
-            </p>
-            {visibleReplies[comment._id] && (
-              <div>
-                {comment.replies.map((reply) => (
-                  <div key={reply._id} style={{ marginLeft: "20px" }}>
-                    <p>{reply.content}</p>
+          <div className="mt-2">
+            <div>
+              {comment.replies.map((reply) => (
+                <div key={reply._id} style={{ marginRight: "25px" }}>
+                  <div className="d-flex align-items-center gap-2">
+                    <FaUser className="fs-4" />
+                    <span className="text-black-50">userName</span>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="comment-text mb-0">{reply.reply}</div>
+                  <div>
+                    <span className="comment-date me-4">
+                      {new Date(reply.createdAt).toLocaleString()}
+                    </span>
+                    <div className="comment-actions d-flex gap-2 me-4">
+                      <span
+                        onClick={() => setReplyMode(comment._id)}
+                        className="text-black-50"
+                      >
+                        رد
+                      </span>
+
+                      {user === reply.user && (
+                        <span
+                          onClick={() =>
+                            dispatch(
+                              delReply({
+                                productId: product._id,
+                                commentId: comment._id,
+                                replyId: reply._id,
+                              })
+                            )
+                          }
+                          className="text-black-50"
+                        >
+                          حذف
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </Fragment>

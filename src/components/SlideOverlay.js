@@ -34,13 +34,15 @@ function SlideOverlay({
   const navigate = useNavigate();
   const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   const sharedProduct = useSelector(getSharedProduct);
-  const productId = product._id;
+  const productId = product ? product._id : null;
   const userData = userInfo ? userInfo[`Client data`][0] : null;
   const UserId = userData ? userData._id : null;
-  const VendorId = product.idVendor;
+  const VendorId = product ? product.idVendor : null;
 
   useEffect(() => {
-    dispatch(fetchAsyncProductSingle(product._id));
+    if (product) {
+      dispatch(fetchAsyncProductSingle(product._id));
+    }
     if (isAuthenticated) {
       dispatch(fetchFavoriteProduct(UserId));
     }
@@ -76,12 +78,14 @@ function SlideOverlay({
       dispatch(fetchVendors(UserId));
     }
   };
-
+  const [isFavoriteIcon, setIsFavoriteIcon] = useState(false);
   function handleAddFavorite() {
     if (isFavorite && isAuthenticated) {
+      setIsFavoriteIcon(false);
       dispatch(delFavorite({ productId, UserId }));
       dispatch(fetchFavoriteProduct(UserId));
     } else if (isAuthenticated) {
+      setIsFavoriteIcon(true);
       dispatch(addToFavorite({ productId, UserId }));
       dispatch(fetchFavoriteProduct(UserId));
     }
@@ -114,7 +118,7 @@ function SlideOverlay({
             <div className="vendor-logo">
               <Link
                 className="vend-in"
-                to={`/vendorpage/${product.idVendor}`}
+                to={product && `/vendorpage/${product.idVendor}`}
               ></Link>
               <div className="wrapper">
                 <div className="follow-plus">
@@ -133,19 +137,29 @@ function SlideOverlay({
               <div className="item">
                 <FaHeart
                   style={{
-                    color: isFavorite && isAuthenticated ? "#FF0000" : "white",
+                    color:
+                      (isFavorite && isAuthenticated) ||
+                      (isFavoriteIcon && isAuthenticated)
+                        ? "#FF0000"
+                        : "white",
                   }}
                   onClick={() => handleAddFavorite()}
                 />
                 <span>
-                  {formatLikesCount(parseLikesCount(0) + (isFavorite ? 1 : 0))}
+                  {formatLikesCount(
+                    parseLikesCount(0) +
+                      ((isFavorite && isAuthenticated) ||
+                      (isFavoriteIcon && isAuthenticated)
+                        ? 1
+                        : 0)
+                  )}
                 </span>
               </div>
             </div>
             <div className="smart-wrapper">
               <div
                 className="item"
-                id={product.id}
+                id={product && product._id}
                 onClick={() => {
                   setComment((comment) => !comment);
                   setSocial(false);
@@ -153,11 +167,11 @@ function SlideOverlay({
                 }}
               >
                 <FaCommentDots />
-                <span>{product.comments.length}</span>
+                <span>{product && product.comments.length}</span>
               </div>
             </div>
             <div className="smart-wrapper">
-              <Link to="/inbox/chat">
+              <Link to={isAuthenticated ? "/inbox/chat" : ""}>
                 <div className="item">
                   <RiChatForwardLine />
                   <span>Chat</span>

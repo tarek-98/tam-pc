@@ -19,6 +19,13 @@ const MessageInput = ({ senderId, receiverId }) => {
     setMessage(message + emoji);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && message.trim() !== "") {
+      dispatch(sendMessageAsync({ senderId, receiverId, message }));
+      setMessage("");
+    }
+  };
+
   return (
     <div className="message-input">
       <input
@@ -26,6 +33,7 @@ const MessageInput = ({ senderId, receiverId }) => {
         className="form-control"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyPress={handleKeyPress}
         placeholder="اكتب رسالتك"
       />
       <button className="btn btn-primary" onClick={handleSendMessage}>

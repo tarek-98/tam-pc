@@ -63,7 +63,7 @@ function ProductSingle() {
   };
 
   useEffect(() => {
-    document.title = `${product.name}`;
+    document.title = product && `${product.name}`;
   }, []);
 
   //handle size
@@ -122,7 +122,7 @@ function ProductSingle() {
             ></video>
           </div>
         </div>
-        {/*<SlideOverlay
+        <SlideOverlay
           product={product}
           comment={comment}
           setComment={setComment}
@@ -135,7 +135,8 @@ function ProductSingle() {
           product={product}
           addProduct={addProduct}
           setAddProduct={setAddProduct}
-        />*/}
+          setSocial={setSocial}
+        />
       </div>
       <div
         className={volume ? "volume-hide" : "volume-single"}
@@ -220,7 +221,7 @@ function ProductSingle() {
                 </div>
                 <div className="product-single-r mt-1" dir="rtl">
                   <div className="product-details font-manrope">
-                    <div className="title mb-3">{product.name}</div>
+                    <div className="title mb-3">{product && product.name}</div>
                     <div className="product loc">
                       <span>يشحن من </span>
                       <span className=" text-danger">الرياض</span>

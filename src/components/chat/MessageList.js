@@ -7,6 +7,7 @@ import {
 } from "../../store/chatSlice";
 import "./inbox.css";
 import io from "socket.io-client";
+import MessageItem from "./MessageItem";
 
 const socket = io("https://tager.onrender.com");
 
@@ -56,14 +57,7 @@ const MessageList = ({ senderId, receiverId }) => {
   return (
     <div className="message-list" ref={messageListRef} onScroll={handleScroll}>
       {messages.map((message) => (
-        <div
-          key={message._id}
-          className={`message-item ${
-            message.senderId === senderId ? "sent" : "received"
-          }`}
-        >
-          <p>{message.message}</p>
-        </div>
+        <MessageItem key={message._id} message={message} senderId={senderId} />
       ))}
     </div>
   );

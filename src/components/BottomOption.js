@@ -22,7 +22,7 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
   }, []);
 
   //handle size
-  let discountedPrice = product.price - 5;
+  let discountedPrice = product ? product.price - 5 : null;
 
   /* shipping method*/
   const methods = useSelector((state) => state.shipping.methods);
@@ -62,11 +62,11 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
           </div>
           <div className={discount ? "old-price-hide" : "old-price"}>
             <div className="dis-v">
-              <span>خصم {product.price + product.price * 0.15}</span>
+              <span>خصم {product && product.price + product.price * 0.15}</span>
             </div>
             <div>
               <span className="ms-1">
-                {product.price + product.price * 0.15}
+                {product && product.price + product.price * 0.15}
               </span>
               <span>ر.س</span>
             </div>

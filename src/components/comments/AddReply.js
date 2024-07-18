@@ -5,9 +5,9 @@ import { addReply } from "../../store/commentSlice";
 const AddReply = ({ commentId, setReplyMode, product }) => {
   const [reply, setReply] = useState("");
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
-  const userData = userInfo[`Client data`][0];
-  const user = userData._id;
+  const { userInfo, isAuthenticated } = useSelector((state) => state.auth);
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const user = userData ? userData._id : null;
   const productId = product._id;
   const onreplyChanged = (e) => setReply(e.target.value);
 
@@ -30,6 +30,7 @@ const AddReply = ({ commentId, setReplyMode, product }) => {
         type="button"
         onClick={onSaveReplyClicked}
         className="reply-button"
+        disabled={!isAuthenticated || reply === ""}
       >
         رد
       </button>
