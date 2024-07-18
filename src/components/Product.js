@@ -65,10 +65,10 @@ function Product({
     if (activeProduct) {
       dispatch(increaseProductViews(activeProduct._id));
       dispatch(addViewedProduct(activeProduct._id));
+      localStorage.setItem("receiverId", activeProduct.idVendor);
     }
     dispatch(fetchAsyncProductSingle(activeProduct._id));
     dispatch(shareProduct(activeProduct._id));
-    console.log(activeProduct._id);
   };
 
   return (
@@ -124,6 +124,7 @@ function Product({
                             // poster={`${img_url}/${product.images[0]}`}
                             id={index}
                             src={vid2}
+                            // src={product.video}
                             className="react-player"
                             autoPlay={true}
                             muted={sound}
@@ -134,6 +135,10 @@ function Product({
                               setCurrentVideo(index);
                               dispatch(fetchAsyncProductSingle(product._id));
                               dispatch(shareProduct(product._id));
+                              localStorage.setItem(
+                                "receiverId",
+                                product.idVendor
+                              );
                             }}
                             onClick={() => togglePlay(index)}
                           ></video>

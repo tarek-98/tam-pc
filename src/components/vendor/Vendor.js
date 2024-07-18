@@ -40,7 +40,8 @@ function Vendor() {
   const dispatch = useDispatch();
   const vendor = useSelector(getSingleVendor);
   const { productsStatus } = useSelector((state) => state.product);
-  const products = useSelector(getProductsByVendor); //for test
+  // const products = useSelector(getProductsByVendor); //for test
+  const products = useSelector(getAllProducts); //for test
   const [vendorFollow, setVendorFollow] = useState(false);
   const [toggleNav, setToggleNav] = useState(0);
 
@@ -61,7 +62,7 @@ function Vendor() {
   /* */
 
   const isFollower = products.some((follow) => follow.id === id); //test fav
-  const UserId = 1;
+  const UserId = `66754d563efd7b1698104f14`;
   function handleFollowVendor() {
     setVendorFollow(!vendorFollow);
     if (!isFollower) {
@@ -199,7 +200,7 @@ function Vendor() {
                               <Col lg="4" sm="6" xs="6" className="p-0 p-1">
                                 <div className="vendor-products-item">
                                   <Link
-                                    to={`/product/${product.id}`}
+                                    to={`/product/${product._id}`}
                                     className="text-decoration-none"
                                   >
                                     <div className="image">

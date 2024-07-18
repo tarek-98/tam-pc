@@ -51,7 +51,7 @@
 .plyer-container video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: unset;
   z-index: 3;
   position: absolute;
   top: 0px;

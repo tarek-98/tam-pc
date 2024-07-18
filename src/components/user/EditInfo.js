@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./userProfile.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import axios from "axios";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser, fetchUsers } from "../../store/usersSlice";
@@ -21,12 +20,13 @@ function EditInfo() {
     Email: "",
     PhoneNumber: "",
   });
-  const users = useSelector((state) => state.users);
 
-  const id = 1;
+  const { userInfo } = useSelector((state) => state.auth);
+  const userInformation = userInfo[`Client data`][0];
+  const id = userInformation._id;
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchUsers(id));
+    console.log(userInfo);
   }, []);
 
   const handleChange = (e) => {
@@ -95,7 +95,7 @@ function EditInfo() {
               type="text"
               name="FirstName"
               value={userData.FirstName}
-              placeholder={users.firstname}
+              placeholder={userInformation.FirstName}
               onChange={handleChange}
             />
           </Form.Group>
@@ -104,7 +104,7 @@ function EditInfo() {
             <Form.Control
               type="text"
               name="LastName"
-              placeholder={users.lastname}
+              placeholder={userInformation.LastName}
               value={userData.LastName}
               onChange={handleChange}
             />
@@ -114,7 +114,7 @@ function EditInfo() {
             <Form.Control
               type="text"
               name="PhoneNumber"
-              placeholder={users.phone}
+              placeholder={userInformation.PhoneNumber}
               value={userData.PhoneNumber}
               onChange={handleChange}
               maxLength="10"
@@ -127,15 +127,18 @@ function EditInfo() {
               type="email"
               name="Email"
               value={userData.Email}
-              placeholder={users.email}
+              placeholder={userInformation.Email}
               onChange={handleChange}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCity">
-            <Form.Control type="hidden" value={users.city} />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicAddress">
-            <Form.Control type="hidden" placeholder={users.address} />
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>الباسورد</Form.Label>
+            <Form.Control
+              type="password"
+              name="Password"
+              value={userData.Password}
+              onChange={handleChange}
+            />
           </Form.Group>
           <Button variant="primary" type="submit">
             تعديل

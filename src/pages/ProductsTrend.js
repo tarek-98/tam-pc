@@ -1,50 +1,43 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../components/singleProduct/singleProduct.css";
-import { useParams } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAsyncProductSingle,
-  getProductSingle,
-} from "../store/productSlice";
-import vid from "../videos/Download.mp4";
-import SlideOverlay from "../components/SlideOverlay";
-import BottomOption from "../components/BottomOption";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import Navbar from "../components/Navbar";
 import { FaVolumeXmark } from "react-icons/fa6";
-import Swal from "sweetalert2";
-import { addToCart } from "../store/cartSlice";
-import { fetchFavoriteProduct } from "../store/favorite-slice";
+import { useDispatch, useSelector } from "react-redux";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Comments from "../components/comments/CommentList";
+import NewestProduct from "../components/products/NewestProduct";
+import {
+  fetchAsyncNewestProducts,
+  fetchAsyncTrendProducts,
+  getAllNewestProducts,
+  getAllTrendProducts,
+  getProductSingle,
+} from "../store/productSlice";
+import Swal from "sweetalert2";
+import { addToCart } from "../store/cartSlice";
+import TrendProducts from "../components/products/TrendProducts";
 
-function ProductSingle() {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const productData = useSelector(getProductSingle);
-  const product = productData.product;
-  const comments = product ? product.comments : null;
+function ProductsTrend() {
   const [volume, setVolume] = useState(false);
   const [sound, setSound] = useState(true);
   const [comment, setComment] = useState(false);
   const [info, setInfo] = useState(false);
   const [addProduct, setAddProduct] = useState(false);
-  const [social, setSocial] = useState(false);
+  const products = useSelector(getAllTrendProducts);
+  const productData = useSelector(getProductSingle);
+  const product = productData.product;
+  const comments = product ? product.comments : null;
+
   const [quantity, setQuantity] = useState(1);
   const [discount, setdiscount] = useState(false);
-  const videoRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAsyncProductSingle(id));
+    console.log(productData);
     console.log(product);
   }, []);
-
-  const togglePlay = () => {
-    const video = videoRef.current;
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  };
+  useEffect(() => {
+    dispatch(fetchAsyncTrendProducts());
+  }, []);
 
   const increaseQty = () => {
     setQuantity((prevQty) => {
@@ -61,10 +54,6 @@ function ProductSingle() {
       return tempQty;
     });
   };
-
-  useEffect(() => {
-    document.title = `${product.name}`;
-  }, []);
 
   //handle size
   const data = [41, 42, 43];
@@ -99,46 +88,26 @@ function ProductSingle() {
     });
   }
 
-  const UserId = `66754d563efd7b1698104f14`;
   useEffect(() => {
-    dispatch(fetchFavoriteProduct(UserId));
+    console.log(comments);
+    document.title = "TMGGL";
   }, []);
 
   return (
-    <div className="single-product video-card">
-      <div className="video-slide-container">
-        <div className="plyer-container">
-          <div>
-            <video
-              id={id}
-              src={vid}
-              className="react-player"
-              autoPlay
-              muted={sound}
-              loop
-              playsInline={true}
-              ref={videoRef}
-              onClick={togglePlay}
-            ></video>
-          </div>
-        </div>
-        {/*<SlideOverlay
-          product={product}
-          comment={comment}
-          setComment={setComment}
-          social={social}
-          setSocial={setSocial}
-          info={info}
-          setInfo={setInfo}
-        />
-        <BottomOption
-          product={product}
-          addProduct={addProduct}
-          setAddProduct={setAddProduct}
-        />*/}
-      </div>
+    <Fragment>
+      <Navbar />
+      <TrendProducts
+        sound={sound}
+        comment={comment}
+        info={info}
+        setInfo={setInfo}
+        addProduct={addProduct}
+        setAddProduct={setAddProduct}
+        setComment={setComment}
+        products={products.products}
+      />
       <div
-        className={volume ? "volume-hide" : "volume-single"}
+        className={volume ? "volume-hide" : "volume"}
         onClick={() => {
           setSound(!sound);
           setVolume(!volume);
@@ -147,7 +116,6 @@ function ProductSingle() {
         <FaVolumeXmark />
         <span className="">Unmute</span>
       </div>
-
       {product && (
         <div className={comment ? "comment-wrapper" : "comment-wrapper-hide"}>
           <div className="comment-wrapper-overlay"></div>
@@ -196,7 +164,7 @@ function ProductSingle() {
                 <div className="product-img">
                   <div className="product-img-zoom w-100 mb-2">
                     <img
-                      src={product.img}
+                      src={product.image}
                       alt=""
                       className="img-cover w-100 h-100"
                     />
@@ -204,14 +172,14 @@ function ProductSingle() {
                   <div className="product-img-thumbs d-flex align-center">
                     <div className="thumb-item">
                       <img
-                        src={product.img}
+                        src={product.image}
                         alt=""
                         className="img-cover w-100"
                       />
                     </div>
                     <div className="thumb-item">
                       <img
-                        src={product.img}
+                        src={product.image}
                         alt=""
                         className="img-cover w-100"
                       />
@@ -316,8 +284,8 @@ function ProductSingle() {
           </div>
         </div>
       )}
-    </div>
+    </Fragment>
   );
 }
 
-export default ProductSingle;
+export default ProductsTrend;

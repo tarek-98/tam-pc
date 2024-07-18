@@ -22,6 +22,7 @@
   margin-right: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  outline: none;
 }
 
 .comment-button,
@@ -47,7 +48,7 @@
 .comment-list {
   list-style: none;
   padding: 0;
-  /* padding-bottom: 20px; */
+  padding-bottom: 20px;
 }
 
 .comment-item {
@@ -70,15 +71,10 @@
   margin-right: 10px;
 }
 
-.comment-item .comment-actions button {
+.comment-item .comment-actions span {
   background: transparent;
-  color: #007bff;
   cursor: pointer;
   border: none;
-}
-
-.comment-item .comment-actions button:hover {
-  color: #0056b3;
 }
 
 .comment-form {

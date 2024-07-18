@@ -188,7 +188,6 @@
 .comment-wrapper-container .close {
   position: sticky;
   position: -webkit-sticky;
-  cursor: pointer;
   top: 0%;
   /* left: 190px; */
   right: 0;
@@ -206,6 +205,7 @@
 .comment-wrapper-container .close svg {
   font-size: 25px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .comment-form {

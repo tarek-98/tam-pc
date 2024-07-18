@@ -27,10 +27,8 @@ import { fetchFavoriteProduct } from "../../store/favorite-slice";
 
 function UserProfile({ socket }) {
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.users);
   const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const id = 1;
   const [toggleNav, setToggleNav] = useState(0);
   const [currentPage, setCurrentPage] = useState("favorite");
   const [isOpen, setIsOpen] = useState(false);
@@ -38,9 +36,8 @@ function UserProfile({ socket }) {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
-    console.log(userInfo);
-  }, []);
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const UserId = userData ? userData._id : null;
 
   const renderPage = () => {
     switch (currentPage) {
@@ -58,18 +55,14 @@ function UserProfile({ socket }) {
   };
 
   function handleLogout() {
-    const UserId = `66754d563efd7b1698104f14`;
-    const Authorization = userInfo.JWT;
     dispatch(setIsAuthenticated(false));
-    dispatch(logOutAsync(Authorization));
+    dispatch(logOutAsync());
     localStorage.removeItem("token");
     dispatch(fetchFavoriteProduct(UserId));
     navigate("/login");
   }
 
   useEffect(() => {
-    dispatch(fetchUsers(id));
-    console.log(isAuthenticated);
     document.title = "Profile";
   }, [isAuthenticated]);
 
@@ -85,11 +78,12 @@ function UserProfile({ socket }) {
                 </div>
                 <div className="user-info-details">
                   <div className="d-flex flex-row align-items-center name-details">
-                    <span className="ms-1 fw-bold fs-3">{users.firstname}</span>
-                    <span className="fw-bold fs-3">{users.lastname}</span>
+                    <span className="ms-1 fw-bold fs-3">
+                      {userData.FirstName} {userData.LastName}
+                    </span>
                   </div>
                   <div className="user-ph text-center mb-2">
-                    <span>{users.phone}</span>
+                    <span>{userData.PhoneNumber}</span>
                   </div>
                   <div className="user-edit text-center" onClick={toggleModal}>
                     <FaRegEdit className="text-dark m1-2" />
@@ -166,7 +160,7 @@ function UserProfile({ socket }) {
                     <span>تعديل البيانات</span>
                   </div>
                   <div className="saved-address ms-auto">
-                    <EditInfo />
+                    <EditInfo userInfo={userData} />
                   </div>
                 </div>
               </div>
@@ -182,8 +176,9 @@ function UserProfile({ socket }) {
             <div className="user-icon">
               <FaUser />
               <div className="user-name d-flex flex-row-reverse gap-1">
-                <span className="me-1">{users.firstname}</span>
-                <span>{users.lastname}</span>
+                <span className="ms-1 fw-bold fs-3">
+                  {userData.FirstName} {userData.LastName}
+                </span>
               </div>
             </div>
           </div>

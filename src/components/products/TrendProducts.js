@@ -8,9 +8,10 @@ import vid2 from "../../videos/Download.mp4";
 import BottomOption from "../BottomOption";
 import { Mousewheel } from "swiper/modules";
 import {
+  fetchAsyncNewestProducts,
   fetchAsyncProductSingle,
   fetchAsyncTrendProducts,
-  getAllTrendProducts,
+  getNewestProductsStatus,
   shareProduct,
 } from "../../store/productSlice";
 import { increaseProductViews, addViewedProduct } from "../../store/sortSlice";
@@ -30,10 +31,11 @@ function TrendProducts({
   const videoRef = useRef(null);
 
   const [currentVideo, setCurrentVideo] = useState(null);
-  const productsStatus = useSelector(getAllTrendProducts);
+  const productsStatus = useSelector(getNewestProductsStatus);
 
   useEffect(() => {
     dispatch(fetchAsyncTrendProducts());
+    console.log(products);
   }, []);
 
   const handleSlideChange = (swiper) => {
@@ -109,51 +111,52 @@ function TrendProducts({
           </div>
         ) : (
           <Fragment>
-            {products.map((product, index) => {
-              return (
-                <Fragment>
-                  <SwiperSlide key={product.id}>
-                    <div className="video-slide-container">
-                      <div className="plyer-container">
-                        <div>
-                          <video
-                            id={index}
-                            src={vid2}
-                            className="react-player"
-                            autoPlay={true}
-                            muted={sound}
-                            loop
-                            playsInline={true}
-                            ref={videoRef}
-                            onPlay={() => {
-                              setCurrentVideo(index);
-                              dispatch(fetchAsyncProductSingle(product._id));
-                              dispatch(shareProduct(product._id));
-                            }}
-                            onClick={() => togglePlay(index)}
-                          ></video>
+            {products &&
+              products.map((product, index) => {
+                return (
+                  <Fragment>
+                    <SwiperSlide key={product.id}>
+                      <div className="video-slide-container">
+                        <div className="plyer-container">
+                          <div>
+                            <video
+                              id={index}
+                              src={vid2}
+                              className="react-player"
+                              autoPlay={true}
+                              muted={sound}
+                              loop
+                              playsInline={true}
+                              ref={videoRef}
+                              onPlay={() => {
+                                setCurrentVideo(index);
+                                dispatch(fetchAsyncProductSingle(product._id));
+                                dispatch(shareProduct(product._id));
+                              }}
+                              onClick={() => togglePlay(index)}
+                            ></video>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <SlideOverlay
-                      product={product}
-                      comment={comment}
-                      setComment={setComment}
-                      social={social}
-                      setSocial={setSocial}
-                      info={info}
-                      setInfo={setInfo}
-                    />
-                    <BottomOption
-                      product={product}
-                      addProduct={addProduct}
-                      setAddProduct={setAddProduct}
-                      setSocial={setSocial}
-                    />
-                  </SwiperSlide>
-                </Fragment>
-              );
-            })}
+                      <SlideOverlay
+                        product={product}
+                        comment={comment}
+                        setComment={setComment}
+                        social={social}
+                        setSocial={setSocial}
+                        info={info}
+                        setInfo={setInfo}
+                      />
+                      <BottomOption
+                        product={product}
+                        addProduct={addProduct}
+                        setAddProduct={setAddProduct}
+                        setSocial={setSocial}
+                      />
+                    </SwiperSlide>
+                  </Fragment>
+                );
+              })}
           </Fragment>
         )}
       </Swiper>

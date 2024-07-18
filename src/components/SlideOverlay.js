@@ -35,7 +35,8 @@ function SlideOverlay({
   const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
   const sharedProduct = useSelector(getSharedProduct);
   const productId = product._id;
-  const UserId = `66754d563efd7b1698104f14`;
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const UserId = userData ? userData._id : null;
   const VendorId = product.idVendor;
 
   useEffect(() => {
@@ -70,15 +71,17 @@ function SlideOverlay({
   const isFollower = favorites.some((follow) => follow._id === product._id); //test follower
 
   const handIconClick = () => {
-    dispatch(followVendor({ VendorId, UserId }));
-    dispatch(fetchVendors(UserId));
+    if (isAuthenticated) {
+      dispatch(followVendor({ VendorId, UserId }));
+      dispatch(fetchVendors(UserId));
+    }
   };
 
   function handleAddFavorite() {
-    if (isFavorite) {
+    if (isFavorite && isAuthenticated) {
       dispatch(delFavorite({ productId, UserId }));
       dispatch(fetchFavoriteProduct(UserId));
-    } else {
+    } else if (isAuthenticated) {
       dispatch(addToFavorite({ productId, UserId }));
       dispatch(fetchFavoriteProduct(UserId));
     }
@@ -135,9 +138,7 @@ function SlideOverlay({
                   onClick={() => handleAddFavorite()}
                 />
                 <span>
-                  {formatLikesCount(
-                    parseLikesCount(product.price) + (isFavorite ? 1 : 0)
-                  )}
+                  {formatLikesCount(parseLikesCount(0) + (isFavorite ? 1 : 0))}
                 </span>
               </div>
             </div>
@@ -156,10 +157,12 @@ function SlideOverlay({
               </div>
             </div>
             <div className="smart-wrapper">
-              <div className="item">
-                <RiChatForwardLine />
-                <span>Chat</span>
-              </div>
+              <Link to="/inbox/chat">
+                <div className="item">
+                  <RiChatForwardLine />
+                  <span>Chat</span>
+                </div>
+              </Link>
             </div>
             <div className="smart-wrapper">
               <div

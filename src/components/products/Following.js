@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
 import "./following.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchVendors, getAllVendors } from "../../store/vendorsSlice";
+import { fetchFollowers, getAllFollowers } from "../../store/vendorsSlice";
 import { Link } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
 
 function Following() {
-  const vendors = useSelector(getAllVendors);
+  const vendors = useSelector(getAllFollowers);
   const dispatch = useDispatch();
-  const userId = `66754d563efd7b1698104f14`; //test
+  const { userInfo } = useSelector((state) => state.auth);
+  const userData = userInfo[`Client data`][0];
+  const userId = userData._id;
   useEffect(() => {
-    dispatch(fetchVendors(userId));
+    dispatch(fetchFollowers(userId));
     console.log(vendors);
   }, []);
 

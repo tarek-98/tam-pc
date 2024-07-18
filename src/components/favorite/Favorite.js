@@ -22,7 +22,9 @@ function Favorite() {
 
   const [currentVideo, setCurrentVideo] = useState(null);
   const videoRef = useRef(null);
-  const UserId = `66754d563efd7b1698104f14`; //test
+  const { userInfo } = useSelector((state) => state.auth);
+  const userData = userInfo[`Client data`][0];
+  const UserId = userData._id;
 
   useEffect(() => {
     dispatch(fetchFavoriteProduct(UserId));
@@ -35,9 +37,14 @@ function Favorite() {
 
   if (favorites.length === 0) {
     return (
-      <Col lg="12" className="d-flex justify-content-center align-items-center">
-        <h3>لا يوجد منتجات مفضلة</h3>
-      </Col>
+      <div className="main-fav pt-5">
+        <Col
+          lg="12"
+          className="d-flex justify-content-center align-items-center pt-5"
+        >
+          <h3>لا يوجد منتجات مفضلة</h3>
+        </Col>
+      </div>
     );
   }
 

@@ -1,188 +1,137 @@
 // src/features/comments/Comments.js
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchComments,
-  addComment,
-  deleteComment,
-} from "../../store/commentSlice";
+import { deleteComment } from "../../store/commentSlice";
 import "./comments.css";
+import AddComment from "./AddComment";
+import EditComment from "./EditComment";
+import AddReply from "./AddReply";
 import { FaUser } from "react-icons/fa";
-import axios from "axios";
 
 const Comments = ({ product }) => {
   const dispatch = useDispatch();
-  // const comments = useSelector((state) => state.comments.comments);
-  const comments = product.comments;
-  const [newComment, setNewComment] = useState("");
-  const [replyText, setReplyText] = useState("");
   const [editMode, setEditMode] = useState(null);
-  const [editText, setEditText] = useState("");
   const [replyMode, setReplyMode] = useState(null);
+  const [visibleReplies, setVisibleReplies] = useState({});
+  const comments = product.comments;
 
-  const curretUser = "user2";
+  const { userInfo } = useSelector((state) => state.auth);
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const user = userData ? userData._id : null;
 
   useEffect(() => {
     console.log(comments);
-  }, [dispatch]);
-
-  const handleAddComment = () => {
-    dispatch(
-      addComment({
-        text: newComment,
-        userId: curretUser,
-        createdAt: new Date().toISOString(),
-        parentId: null,
-      })
-    );
-    setNewComment("");
+  }, []);
+  const toggleReplies = (commentId) => {
+    setVisibleReplies((prevState) => ({
+      ...prevState,
+      [commentId]: !prevState[commentId],
+    }));
   };
 
-  const handleAddReply = (parentId) => {
-    dispatch(
-      addComment({
-        text: replyText,
-        userId: curretUser,
-        createdAt: new Date().toISOString(),
-        parentId,
-      })
-    );
-    setReplyText("");
-    setReplyMode(null);
-  };
+  let content;
+  content = comments.map((comment) => (
+    <li key={comment._id} className="comment-item">
+      <Fragment>
+        <div className="d-flex align-items-center gap-2">
+          <FaUser className="fs-4" />
+          <span>userName</span>
+        </div>
+        <div className="comment-text mb-0">{comment.comment}</div>
+        <div>
+          <span className="comment-date me-4">
+            {new Date(comment.createdAt).toLocaleString()}
+          </span>
+          <div className="comment-actions d-flex gap-2 me-4">
+            {user === comment.client && (
+              <span
+                onClick={() => {
+                  setEditMode(comment._id);
+                }}
+                className="text-black-50"
+              >
+                تعديل
+              </span>
+            )}
 
-  const handleEditComment = (comment) => {
-    const now = new Date();
-    console.log(now);
-    axios({
-      method: "PUT",
-      url: `http://localhost:9000/comments/${comment.id}`,
-      data: {
-        id: comment.id,
-        text: editText,
-        userId: comment.userId,
-        createdAt: now,
-        parentId: comment.parentId,
-      },
-    }).then((data) => {
-      dispatch(fetchComments());
-      setEditMode(null);
-      setEditText("");
-    });
-  };
+            <span
+              onClick={() => setReplyMode(comment._id)}
+              className="text-black-50"
+            >
+              رد
+            </span>
 
-  const handleDeleteComment = (id) => {
-    dispatch(deleteComment(id));
-  };
-
-  const renderComments = (parentId = null) => {
-    return comments
-      .filter((comment) => comment.parentId === parentId)
-      .map((comment) => (
-        <li key={comment._id} className="comment-item">
-          {editMode === comment._id ? (
-            <Fragment>
-              <div className="d-flex align-items-center">
-                <input
-                  type="text"
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  className="edit-input"
-                />
-                <button
-                  onClick={() => handleEditComment(comment)}
-                  className="edit-button"
-                >
-                  تعديل
-                </button>
-                <button
-                  onClick={() => setEditMode(null)}
-                  className="edit-button"
-                >
-                  الغاء
-                </button>
-              </div>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <div className="d-flex align-items-center gap-2">
-                <FaUser className="fs-4" />
-                <span>userName</span>
-              </div>
-              <div className="comment-text">{comment.comment}</div>
+            {user === comment.client && (
+              <span
+                onClick={() =>
+                  dispatch(
+                    deleteComment({
+                      productId: product._id,
+                      commentId: comment._id,
+                    })
+                  )
+                }
+                className="text-black-50"
+              >
+                حذف
+              </span>
+            )}
+          </div>
+        </div>
+        {comment.replies.length > 0 && (
+          <div>
+            <p onClick={() => toggleReplies(comment._id)}>
+              {visibleReplies[comment.id]
+                ? "Hide Replies"
+                : `Show ${comment.replies.length} Replies`}
+            </p>
+            {visibleReplies[comment._id] && (
               <div>
-                <span className="comment-date">
-                  {new Date(comment.createdAt).toLocaleString()}
-                </span>
-                <div className="comment-actions">
-                  <button
-                    onClick={() => {
-                      setEditMode(comment._id);
-                      setEditText(comment.text);
-                    }}
-                    className="edit-button text-black-50"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    onClick={() => handleDeleteComment(comment._id)}
-                    className="delete-button text-black-50"
-                  >
-                    حذف
-                  </button>
-                  <button
-                    onClick={() => setReplyMode(comment._id)}
-                    className="reply-button text-black-50"
-                  >
-                    رد
-                  </button>
-                </div>
+                {comment.replies.map((reply) => (
+                  <div key={reply._id} style={{ marginLeft: "20px" }}>
+                    <p>{reply.content}</p>
+                  </div>
+                ))}
               </div>
-            </Fragment>
-          )}
-          {replyMode === comment.id && (
-            <Fragment>
-              <div className="d-flex align-items-center">
-                <input
-                  type="text"
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="reply-input"
-                />
-                <button
-                  onClick={() => handleAddReply(comment._id)}
-                  className="reply-button"
-                >
-                  رد
-                </button>
-                <button
-                  onClick={() => setReplyMode(null)}
-                  className="reply-button"
-                >
-                  الغاء
-                </button>
-              </div>
-            </Fragment>
-          )}
-          <ul className="comment-list pe-4">{renderComments(comment._id)}</ul>
-        </li>
-      ));
-  };
+            )}
+          </div>
+        )}
+      </Fragment>
+
+      {editMode === comment._id && (
+        <Fragment>
+          <div className="d-flex align-items-center">
+            <EditComment
+              comment={comment}
+              setEditMode={setEditMode}
+              product={product}
+            />
+          </div>
+        </Fragment>
+      )}
+
+      {replyMode === comment._id && (
+        <Fragment>
+          <div className="d-flex align-items-center">
+            <AddReply
+              commentId={comment._id}
+              setReplyMode={setReplyMode}
+              product={product}
+            />
+          </div>
+        </Fragment>
+      )}
+    </li>
+  ));
 
   return (
     <div className="comment-section">
-      <div className="comment-form">
-        <input
-          type="text"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="comment-input"
-        />
-        <button onClick={handleAddComment} className="comment-button">
-          اضف
-        </button>
-      </div>
-      <ul className="comment-list">{renderComments()}</ul>
+      <form>
+        <div className="comment-form">
+          <AddComment product={product} />
+        </div>
+        <ul className="comment-list">{content}</ul>
+      </form>
     </div>
   );
 };

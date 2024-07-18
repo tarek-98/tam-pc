@@ -1,7 +1,7 @@
 // src/components/ReviewForm.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { submitReview } from "../../store/reviewSlice";
+import { fetchReviews, submitReview } from "../../store/reviewSlice";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Rating } from "@mui/lab";
 import { toast, ToastContainer } from "react-toastify";
@@ -9,7 +9,8 @@ import { toast, ToastContainer } from "react-toastify";
 const ReviewForm = ({ vendorId }) => {
   const [rating, setRating] = useState(0);
   const { userInfo } = useSelector((state) => state.auth);
-  const userId = 5; //test
+  const userData = userInfo[`Client data`][0];
+  const userId = userData._id;
   const [reviewText, setReviewText] = useState("");
   const dispatch = useDispatch();
 
@@ -23,8 +24,10 @@ const ReviewForm = ({ vendorId }) => {
         position: "top-left",
       });
     } else {
-      // dispatch(submitReview({ vendorId, userId, rating, reviewText })); true for use
       dispatch(submitReview({ vendorId, userId, rating, reviewText })); //test
+      setTimeout(() => {
+        dispatch(fetchReviews(vendorId));
+      }, 1000);
     }
     setRating(0);
     setReviewText("");
