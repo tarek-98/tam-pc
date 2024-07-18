@@ -57,6 +57,15 @@ export const addReply = createAsyncThunk(
     return response.data;
   }
 );
+export const delReply = createAsyncThunk(
+  "comments/delReply",
+  async ({ productId, commentId, replyId }) => {
+    const response = await axios.delete(
+      `${API_URL}/products/deletereply/${productId}/${commentId}/${replyId}`
+    );
+    return response.data;
+  }
+);
 
 const commentsSlice = createSlice({
   name: "comments",
@@ -85,6 +94,9 @@ const commentsSlice = createSlice({
         state.comments = state.comments.filter(
           (comment) => comment._id !== action.payload
         );
+      })
+      .addCase(delReply.fulfilled, (state, action) => {
+        state.status = "replay deleted";
       })
       .addCase(editComment.fulfilled, (state, action) => {
         const { id, content } = action.payload;
