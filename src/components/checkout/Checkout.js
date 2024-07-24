@@ -72,7 +72,7 @@ function Checkout() {
   }
 
   useEffect(() => {
-    document.title = "CheckOut";
+    document.title = "صفحة الدفع";
     getAddress();
   }, []);
 

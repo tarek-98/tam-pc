@@ -35,7 +35,12 @@ const Comments = ({ product }) => {
       <Fragment>
         <div className="d-flex align-items-center gap-2">
           <FaUser className="fs-4" />
-          <span className="text-black-50">userName</span>
+          <span className="text-black-50">
+            {product.idVendor === comment.client && (
+              <span className="text-danger me-2">التاجر</span>
+            )}
+            userName
+          </span>
         </div>
         <div className="comment-text mb-0">{comment.comment}</div>
         <div>
@@ -85,7 +90,12 @@ const Comments = ({ product }) => {
                 <div key={reply._id} style={{ marginRight: "25px" }}>
                   <div className="d-flex align-items-center gap-2">
                     <FaUser className="fs-4" />
-                    <span className="text-black-50">userName</span>
+                    <span className="text-black-50">
+                      {product.idVendor === comment.client && (
+                        <span className="text-danger me-2">Creator</span>
+                      )}
+                      userName
+                    </span>
                   </div>
                   <div className="comment-text mb-0">{reply.reply}</div>
                   <div>

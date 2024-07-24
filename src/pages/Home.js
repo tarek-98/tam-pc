@@ -3,12 +3,17 @@ import Navbar from "../components/Navbar";
 import Product from "../components/Product";
 import { FaVolumeXmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { IoIosCloseCircleOutline } from "react-icons/io";
+import {
+  IoIosCloseCircleOutline,
+  IoMdCloseCircleOutline,
+} from "react-icons/io";
 import Comments from "../components/comments/CommentList";
 import { getAllProducts, getProductSingle } from "../store/productSlice";
 import Swal from "sweetalert2";
 import { addToCart } from "../store/cartSlice";
 import { fetchFavoriteProduct } from "../store/favorite-slice";
+import { ToastContainer } from "react-toastify";
+import Login from "../components/login/LogIn";
 
 function Home() {
   const [volume, setVolume] = useState(false);
@@ -21,8 +26,16 @@ function Home() {
   const product = productData.product;
   const comments = product ? product.comments : null;
   const [quantity, setQuantity] = useState(1);
-  const [discount, setdiscount] = useState(false);
+  const [livePrice, setLivePrice] = useState(null);
+  const [liveImg, setLiveImg] = useState(null);
+  const { userInfo } = useSelector((state) => state.auth);
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const UserId = userData ? userData._id : null;
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setLiveImg(null);
+  }, [product]);
 
   const increaseQty = () => {
     setQuantity((prevQty) => {
@@ -40,9 +53,14 @@ function Home() {
     });
   };
 
-  //handle size
-  const data = [41, 42, 43];
-  const [toggleState, setToggleState] = useState(null);
+  const [activeItems, setActiveItems] = useState({});
+
+  const handleItemClick = (namechoose, _id) => {
+    setActiveItems((prevState) => ({
+      ...prevState,
+      [namechoose]: _id,
+    }));
+  };
   const addToCartHandler = (product) => {
     let productLocation = "الرياض";
     let vendorName = "احمد";
@@ -51,7 +69,6 @@ function Home() {
       addToCart({
         ...product,
         quantity: quantity,
-        size: toggleState,
         productLocation,
         vendorName,
       })
@@ -73,11 +90,24 @@ function Home() {
     });
   }
 
-  const UserId = `66754d563efd7b1698104f14`;
   useEffect(() => {
     dispatch(fetchFavoriteProduct(UserId));
-    document.title = "TMGGL";
   }, []);
+  useEffect(() => {
+    document.title = "تمقل - الصفحة الرئيسية";
+  }, []);
+
+  // Grouping by namechoose
+  const groupedChooses =
+    product &&
+    product.chooses.reduce((acc, choose) => {
+      const { namechoose } = choose;
+      if (!acc[namechoose]) {
+        acc[namechoose] = [];
+      }
+      acc[namechoose].push(choose);
+      return acc;
+    }, {});
 
   return (
     <Fragment>
@@ -102,6 +132,7 @@ function Home() {
         <FaVolumeXmark />
         <span className="">Unmute</span>
       </div>
+
       {product && (
         <div className={comment ? "comment-wrapper" : "comment-wrapper-hide"}>
           <div className="comment-wrapper-overlay"></div>
@@ -148,27 +179,37 @@ function Home() {
               <div>
                 <div className="product-img">
                   <div className="product-img-zoom w-100 mb-2">
-                    <img
-                      src={product.img}
-                      alt=""
-                      className="img-cover w-100 h-100"
-                    />
+                    {liveImg ? (
+                      <img
+                        src={liveImg}
+                        alt=""
+                        className="img-cover w-100 h-100"
+                      />
+                    ) : (
+                      <img
+                        src={product.img}
+                        alt=""
+                        className="img-cover w-100 h-100"
+                      />
+                    )}
                   </div>
                   <div className="product-img-thumbs d-flex align-center">
-                    <div className="thumb-item">
-                      <img
-                        src={product.img}
-                        alt=""
-                        className="img-cover w-100"
-                      />
-                    </div>
-                    <div className="thumb-item">
-                      <img
-                        src={product.img}
-                        alt=""
-                        className="img-cover w-100"
-                      />
-                    </div>
+                    {product &&
+                      product.chooses.map((item) => {
+                        return (
+                          <div className="thumb-item">
+                            <img
+                              src={item.img}
+                              alt=""
+                              className="img-cover w-100"
+                              onClick={() => {
+                                setLivePrice(item.pricechoose);
+                                setLiveImg(item.img);
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
                 <div className="product-single-r mt-1" dir="rtl">
@@ -182,16 +223,19 @@ function Home() {
                       <div className="d-flex align-center">
                         <div className="new-price ms-3">
                           <span>السعر : </span>
-                          <span>
-                            {(product.price + product.price * 0.15) * quantity}
-                            ر.س
-                          </span>
+                          {livePrice ? (
+                            <span>
+                              {(livePrice + livePrice * 0.15) * quantity}
+                              ر.س
+                            </span>
+                          ) : (
+                            <span>
+                              {(product.price + product.price * 0.15) *
+                                quantity}
+                              ر.س
+                            </span>
+                          )}
                         </div>
-                        {discount && (
-                          <div className="old-price">
-                            {product.price + product.price * 0.15} ر.س
-                          </div>
-                        )}
                       </div>
                     </div>
                     <div className="qty align-center m-1 mb-2">
@@ -223,48 +267,61 @@ function Home() {
                         ""
                       )}
                     </div>
-                    <div className="size-opt d-flex">
-                      <div className="size-text mb-2 ms-2">المقاس :</div>
-                      <div className="size-change d-flex">
-                        <ul className="size-list">
-                          {data.map((siz) => {
-                            return (
-                              <li
-                                className="list-item"
-                                onClick={() => setToggleState(siz)}
-                                key={siz}
-                              >
-                                <span
-                                  className={
-                                    toggleState === siz
-                                      ? "list-item-opt active"
-                                      : "list-item-opt"
-                                  }
-                                >
-                                  {siz}
-                                </span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
+                    <div className="size-opt d-flex flex-column">
+                      {Object.entries(groupedChooses).map(
+                        ([namechoose, items]) => (
+                          <div key={namechoose}>
+                            <div className="size-change d-flex">
+                              <h5>{namechoose}</h5>
+                              {items.map(
+                                ({
+                                  _id,
+                                  pricetypechoose,
+                                  pricechoose,
+                                  img,
+                                  color,
+                                }) => (
+                                  <ul className="size-list" key={_id}>
+                                    <li
+                                      className="list-item"
+                                      onClick={() =>
+                                        handleItemClick(namechoose, _id)
+                                      }
+                                    >
+                                      <span
+                                        className={
+                                          activeItems[namechoose] === _id
+                                            ? "list-item-opt active"
+                                            : "list-item-opt"
+                                        }
+                                      >
+                                        {color}
+                                      </span>
+                                    </li>
+                                  </ul>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                className="send-cart text-center mt-1 text-white"
-                onClick={() => {
-                  if (toggleState === null) {
-                    sweetAlertOption();
-                  } else {
-                    setAddProduct((addProduct) => !addProduct);
-                    addToCartHandler(product);
-                    sweetAlertAdd();
-                  }
-                }}
-              >
-                اضف الي السلة
+                <div
+                  className="send-cart text-center mt-1 text-white"
+                  onClick={() => {
+                    if (activeItems === null) {
+                      sweetAlertOption();
+                    } else {
+                      setAddProduct((addProduct) => !addProduct);
+                      addToCartHandler(product);
+                      sweetAlertAdd();
+                    }
+                  }}
+                >
+                  اضف الي السلة
+                </div>
               </div>
             </div>
           </div>

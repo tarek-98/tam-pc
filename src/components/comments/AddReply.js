@@ -14,6 +14,7 @@ const AddReply = ({ commentId, setReplyMode, product }) => {
   const onSaveReplyClicked = () => {
     if (reply) {
       dispatch(addReply({ productId, commentId, user, reply }));
+      setReplyMode(null);
       setReply("");
     }
   };

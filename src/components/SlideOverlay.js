@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./slideOverlay.css";
 import { GoPlus } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
-import { FaCommentDots, FaHeart, FaShare } from "react-icons/fa";
+import {
+  FaCommentDots,
+  FaFacebookMessenger,
+  FaHeart,
+  FaShare,
+  FaSnapchat,
+  FaSnapchatGhost,
+  FaTelegram,
+  FaTelegramPlane,
+} from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import { RiChatForwardLine } from "react-icons/ri";
 import { HiMiniBars3 } from "react-icons/hi2";
@@ -97,6 +106,20 @@ function SlideOverlay({
       sharedProduct.link
     )}`;
     window.open(whatsappUrl, "_blank");
+  };
+
+  const handleShareMessenger = () => {
+    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+      sharedProduct.link
+    )}&app_id=YOUR_APP_ID`;
+    window.open(messengerUrl, "_blank");
+  };
+
+  const handleShareTelegram = () => {
+    const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(
+      sharedProduct.link
+    )}&text=${encodeURIComponent("Check out this product!")}`;
+    window.open(telegramUrl, "_blank");
   };
 
   const handleCopyLink = () => {
@@ -205,6 +228,21 @@ function SlideOverlay({
               <div className={social ? "social-home" : "social-home-hide"}>
                 <div className="social-conatact-call" onClick={handleShare}>
                   <FaWhatsapp />
+                </div>
+                <div
+                  className="social-conatact-messenger"
+                  onClick={handleShareMessenger}
+                >
+                  <FaFacebookMessenger />
+                </div>
+                <div className="social-conatact-snap" onClick={handleCopyLink}>
+                  <FaSnapchatGhost />
+                </div>
+                <div
+                  className="social-conatact-telegram"
+                  onClick={handleShareTelegram}
+                >
+                  <FaTelegramPlane />
                 </div>
                 <div className="social-conatact-link" onClick={handleCopyLink}>
                   <CiLink />

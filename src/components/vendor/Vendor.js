@@ -40,16 +40,20 @@ function Vendor() {
   const dispatch = useDispatch();
   const vendor = useSelector(getSingleVendor);
   const { productsStatus } = useSelector((state) => state.product);
-  // const products = useSelector(getProductsByVendor); //for test
-  const products = useSelector(getAllProducts); //for test
+  const { isAuthenticated, userInfo } = useSelector((state) => state.auth);
+  // const data = useSelector(getProductsByVendor); //for test
+  const data = useSelector(getAllProducts); //for test
+  const products = data;
   const [vendorFollow, setVendorFollow] = useState(false);
   const [toggleNav, setToggleNav] = useState(0);
+  const [isFollower, setIsFollower] = useState(0); // test
 
   useEffect(() => {
     dispatch(fetchSingleVendor(id));
     dispatch(fetchAsyncProducts());
     dispatch(fetchProductByVendor(id));
-    console.log(id);
+    console.log(products);
+    document.title = "صفحة التاجر";
   }, []);
 
   /*payments */
@@ -61,8 +65,9 @@ function Vendor() {
   const enabledPayment = payments.filter((method) => method.enabled);
   /* */
 
-  const isFollower = products.some((follow) => follow.id === id); //test fav
-  const UserId = `66754d563efd7b1698104f14`;
+  // const isFollower = products.some((follow) => follow.id === id); //test fav
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const UserId = userData ? userData._id : null;
   function handleFollowVendor() {
     setVendorFollow(!vendorFollow);
     if (!isFollower) {
@@ -136,7 +141,7 @@ function Vendor() {
                 <span>{vendor.name}</span>
               </div>
               <div className="vendor-chat">
-                <Link>
+                <Link to={isAuthenticated ? "/inbox/chat" : ""}>
                   <FaRocketchat />
                   <span>مراسلة التاجر</span>
                 </Link>
@@ -194,31 +199,32 @@ function Vendor() {
                       <h1>Failed to load Products</h1>
                     ) : (
                       <Fragment>
-                        {products.map((product) => {
-                          return (
-                            <Fragment>
-                              <Col lg="4" sm="6" xs="6" className="p-0 p-1">
-                                <div className="vendor-products-item">
-                                  <Link
-                                    to={`/product/${product._id}`}
-                                    className="text-decoration-none"
-                                  >
-                                    <div className="image">
-                                      <video
-                                        // poster={`${img_url}/${product.images[0]}`}
-                                        className="react-player"
-                                        src={vid2}
-                                        muted={true}
-                                        loop
-                                        playsInline={true}
-                                      ></video>
-                                    </div>
-                                  </Link>
-                                </div>
-                              </Col>
-                            </Fragment>
-                          );
-                        })}
+                        {products &&
+                          products.map((product) => {
+                            return (
+                              <Fragment>
+                                <Col lg="4" sm="6" xs="6" className="p-0 p-1">
+                                  <div className="vendor-products-item">
+                                    <Link
+                                      to={`/product/${product._id}`}
+                                      className="text-decoration-none"
+                                    >
+                                      <div className="image">
+                                        <video
+                                          // poster={`${img_url}/${product.images[0]}`}
+                                          className="react-player"
+                                          src={vid2}
+                                          muted={true}
+                                          loop
+                                          playsInline={true}
+                                        ></video>
+                                      </div>
+                                    </Link>
+                                  </div>
+                                </Col>
+                              </Fragment>
+                            );
+                          })}
                       </Fragment>
                     )}
                   </Fragment>

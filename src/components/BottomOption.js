@@ -8,21 +8,11 @@ import { Button } from "@mui/material";
 import { fetchAsyncProductSingle } from "../store/productSlice";
 
 function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
-  const [discount, setdiscount] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchShippingMethods());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (5 > 0) {
-      setdiscount(true);
-    }
-  }, []);
-
-  //handle size
-  let discountedPrice = product ? product.price - 5 : null;
 
   /* shipping method*/
   const methods = useSelector((state) => state.shipping.methods);
@@ -45,22 +35,22 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
         </Button>
         <div className="price">
           <div className="new-price me-4">
-            <div className=" d-flex flex-column justify-content-center align-items-center">
+            {/*<div className=" d-flex flex-column justify-content-center align-items-center">
               <MdLocalShipping className="fs-2" />
               {enabledMethods.price === "0" ? (
                 <span className="free-shipping-text">شحن مجاني</span>
               ) : (
                 ""
               )}
-            </div>
+            </div> */}
             <div>
               <span className="ms-1">
-                {discountedPrice + discountedPrice * 0.15}
+                {product.price + product.price * 0.15}
               </span>
               <span>ر.س</span>
             </div>
           </div>
-          <div className={discount ? "old-price-hide" : "old-price"}>
+          {/*<div className={discount ? "old-price-hide" : "old-price"}>
             <div className="dis-v">
               <span>خصم {product && product.price + product.price * 0.15}</span>
             </div>
@@ -70,7 +60,7 @@ function BottomOption({ product, addProduct, setAddProduct, setSocial }) {
               </span>
               <span>ر.س</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </Fragment>

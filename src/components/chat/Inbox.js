@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./inbox.css";
 
 function Inbox() {
+  useEffect(() => {
+    document.title = "تمقل - صندوق الوارد";
+  }, []);
   return (
     <div className="main-inbox">
       <div className="container">

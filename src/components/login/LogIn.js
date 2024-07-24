@@ -20,6 +20,9 @@ const Login = () => {
       navigate("/profile");
     }
   }, [status]);
+  useEffect(() => {
+    document.title = "تسجيل الدخول الي حسابك";
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

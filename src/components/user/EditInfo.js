@@ -22,8 +22,8 @@ function EditInfo() {
   });
 
   const { userInfo } = useSelector((state) => state.auth);
-  const userInformation = userInfo[`Client data`][0];
-  const id = userInformation._id;
+  const userInformation = userInfo && userInfo[`Client data`][0];
+  const id = userInformation && userInformation._id;
   const dispatch = useDispatch();
   useEffect(() => {
     console.log(userInfo);
@@ -94,8 +94,8 @@ function EditInfo() {
             <Form.Control
               type="text"
               name="FirstName"
-              value={userData.FirstName}
-              placeholder={userInformation.FirstName}
+              value={userData && userData.FirstName}
+              placeholder={userInformation && userInformation.FirstName}
               onChange={handleChange}
             />
           </Form.Group>
@@ -104,8 +104,8 @@ function EditInfo() {
             <Form.Control
               type="text"
               name="LastName"
-              placeholder={userInformation.LastName}
-              value={userData.LastName}
+              placeholder={userInformation && userInformation.LastName}
+              value={userData && userData.LastName}
               onChange={handleChange}
             />
           </Form.Group>
@@ -114,8 +114,8 @@ function EditInfo() {
             <Form.Control
               type="text"
               name="PhoneNumber"
-              placeholder={userInformation.PhoneNumber}
-              value={userData.PhoneNumber}
+              placeholder={userInformation && userInformation.PhoneNumber}
+              value={userData && userData.PhoneNumber}
               onChange={handleChange}
               maxLength="10"
               minLength="10"
@@ -126,8 +126,8 @@ function EditInfo() {
             <Form.Control
               type="email"
               name="Email"
-              value={userData.Email}
-              placeholder={userInformation.Email}
+              value={userData && userData.Email}
+              placeholder={userInformation && userInformation.Email}
               onChange={handleChange}
             />
           </Form.Group>
@@ -136,7 +136,7 @@ function EditInfo() {
             <Form.Control
               type="password"
               name="Password"
-              value={userData.Password}
+              value={userData && userData.Password}
               onChange={handleChange}
             />
           </Form.Group>

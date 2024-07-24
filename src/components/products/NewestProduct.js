@@ -43,6 +43,7 @@ function NewestProduct({
     if (activeProduct) {
       dispatch(increaseProductViews(activeProduct._id));
       dispatch(addViewedProduct(activeProduct._id));
+      localStorage.setItem("receiverId", activeProduct.idVendor);
     }
     dispatch(fetchAsyncProductSingle(activeProduct._id));
     dispatch(shareProduct(activeProduct._id));

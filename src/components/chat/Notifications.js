@@ -30,6 +30,10 @@ const Notifications = () => {
     return () => clearInterval(interval);
   }, [dispatch, notificationStatus]);
 
+  useEffect(() => {
+    document.title = "تمقل - اشعاراتي";
+  }, []);
+
   return (
     <div className="main-inbox">
       <ToastContainer position="top-end" className="p-3">

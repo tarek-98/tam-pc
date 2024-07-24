@@ -63,7 +63,7 @@ function UserProfile({ socket }) {
   }
 
   useEffect(() => {
-    document.title = "Profile";
+    document.title = "حسابي";
   }, [isAuthenticated]);
 
   return (
@@ -79,11 +79,12 @@ function UserProfile({ socket }) {
                 <div className="user-info-details">
                   <div className="d-flex flex-row align-items-center name-details">
                     <span className="ms-1 fw-bold fs-3">
-                      {userData.FirstName} {userData.LastName}
+                      {userData && userData.FirstName}{" "}
+                      {userData && userData.LastName}
                     </span>
                   </div>
                   <div className="user-ph text-center mb-2">
-                    <span>{userData.PhoneNumber}</span>
+                    <span>{userData && userData.PhoneNumber}</span>
                   </div>
                   <div className="user-edit text-center" onClick={toggleModal}>
                     <FaRegEdit className="text-dark m1-2" />
@@ -177,7 +178,8 @@ function UserProfile({ socket }) {
               <FaUser />
               <div className="user-name d-flex flex-row-reverse gap-1">
                 <span className="ms-1 fw-bold fs-3">
-                  {userData.FirstName} {userData.LastName}
+                  {userData && userData.FirstName}{" "}
+                  {userData && userData.LastName}
                 </span>
               </div>
             </div>

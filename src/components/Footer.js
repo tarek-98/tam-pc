@@ -63,7 +63,11 @@ function Footer() {
               className="tab-link"
             >
               <FaRegUserCircle className="tab-icon" />
-              <div className="tab-text">حسابي</div>
+              {isAuthenticated ? (
+                <div className="tab-text">حسابي</div>
+              ) : (
+                <div className="tab-text">تسجيل الدخول</div>
+              )}
             </Link>
           </div>
         </footer>

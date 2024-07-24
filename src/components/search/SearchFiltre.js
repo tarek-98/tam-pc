@@ -29,6 +29,10 @@ function SearchFiltre() {
     ]);
   }, []);
 
+  useEffect(() => {
+    document.title = "تمقل -  صفحة البحث";
+  }, []);
+
   const filterItems = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );

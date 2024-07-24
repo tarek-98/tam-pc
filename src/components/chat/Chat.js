@@ -28,6 +28,10 @@ const Chat = () => {
   });
 
   useEffect(() => {
+    document.title = "تمقل - الرسائل";
+  }, []);
+
+  useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to socket.io server");
     });

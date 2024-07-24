@@ -11,9 +11,9 @@ const ReviewList = ({ vendorId }) => {
   const dispatch = useDispatch();
   const { reviews, loading, error } = useSelector((state) => state.reviews);
   const { userInfo } = useSelector((state) => state.auth);
-  const userData = userInfo[`Client data`][0];
-  const userId = userData._id;
-  const reviewsData = reviews.data;
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const userId = userData ? userData._id : null;
+  const reviewsData = reviews ? reviews.data : null;
   const followers = useSelector(getAllFollowers);
 
   useEffect(() => {

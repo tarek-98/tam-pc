@@ -23,12 +23,12 @@ function Favorite() {
   const [currentVideo, setCurrentVideo] = useState(null);
   const videoRef = useRef(null);
   const { userInfo } = useSelector((state) => state.auth);
-  const userData = userInfo[`Client data`][0];
-  const UserId = userData._id;
+  const userData = userInfo && userInfo[`Client data`][0];
+  const UserId = userData && userData._id;
 
   useEffect(() => {
     dispatch(fetchFavoriteProduct(UserId));
-  }, []);
+  }, [dispatch]);
 
   function handleDelFav({ productId, UserId }) {
     dispatch(delFavorite({ productId, UserId }));
@@ -83,7 +83,7 @@ function Favorite() {
                                 <div className="image">
                                   <video
                                     id={index}
-                                    // poster={`${img_url}/${product.images[0]}`}
+                                    // poster={product.img}
                                     onMouseEnter={() => setCurrentVideo(index)}
                                     onMouseLeave={() => setCurrentVideo(null)}
                                     className="react-player"

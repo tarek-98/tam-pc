@@ -15,7 +15,9 @@ function Following() {
     dispatch(fetchFollowers(userId));
     console.log(vendors);
   }, []);
-
+  useEffect(() => {
+    document.title = "تمقل - اتابعهم";
+  }, []);
   return (
     <div className="following-main">
       <div className="container">

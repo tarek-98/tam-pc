@@ -16,7 +16,7 @@ const CartPage = () => {
   // }, []);
 
   useEffect(() => {
-    document.title = "Cart";
+    document.title = "تمقل - سلة مشترياتي";
   }, []);
 
   const CArtTotlaPrice = carts.reduce((acc, product) => {

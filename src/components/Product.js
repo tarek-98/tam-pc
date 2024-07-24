@@ -121,7 +121,7 @@ function Product({
                       <div className="plyer-container">
                         <div>
                           <video
-                            // poster={`${img_url}/${product.images[0]}`}
+                            poster={product.img}
                             id={index}
                             src={vid2}
                             // src={product.video}

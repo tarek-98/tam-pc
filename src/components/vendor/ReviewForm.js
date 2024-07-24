@@ -8,9 +8,9 @@ import { toast, ToastContainer } from "react-toastify";
 
 const ReviewForm = ({ vendorId }) => {
   const [rating, setRating] = useState(0);
-  const { userInfo } = useSelector((state) => state.auth);
-  const userData = userInfo[`Client data`][0];
-  const userId = userData._id;
+  const { userInfo, isAuthenticated } = useSelector((state) => state.auth);
+  const userData = userInfo ? userInfo[`Client data`][0] : null;
+  const userId = userData ? userData._id : null;
   const [reviewText, setReviewText] = useState("");
   const dispatch = useDispatch();
 
@@ -58,7 +58,12 @@ const ReviewForm = ({ vendorId }) => {
           margin="normal"
         />
       </div>
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
+        disabled={!isAuthenticated}
+      >
         اضف
       </Button>
       <ToastContainer />

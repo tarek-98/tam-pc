@@ -342,7 +342,10 @@ input:checked+.slider:before {
 
   .add-address {
     display: grid;
-    place-items: center;
+    /* place-items: center; */
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .add-address .back-pc {
