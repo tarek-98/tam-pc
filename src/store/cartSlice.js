@@ -23,6 +23,21 @@ export const applyCoupon = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch cart items
+export const fetchCartItems = createAsyncThunk(
+  "cart/fetchCartItems",
+  async () => {
+    const response = await axios.get("/api/cart");
+    return response.data;
+  }
+);
+
+// Async thunk to handle checkout
+export const checkout = createAsyncThunk("cart/checkout", async (items) => {
+  const response = await axios.post("/api/checkout", { items });
+  return response.data;
+});
+
 const fetchFromLocalStorage = () => {
   let cart = localStorage.getItem("cart");
   if (cart) {
@@ -159,6 +174,30 @@ const cartSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
         state.discount = 0;
+      })
+
+      .addCase(fetchCartItems.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchCartItems.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.carts = action.payload;
+      })
+      .addCase(fetchCartItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+
+      .addCase(checkout.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(checkout.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.carts = [];
+      })
+      .addCase(checkout.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
       });
   },
 });

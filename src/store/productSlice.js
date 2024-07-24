@@ -3,6 +3,7 @@ import { STATUS } from "../utils/status";
 import axios from "axios";
 
 const API_URL = "https://tager.onrender.com";
+const Authorization = localStorage.getItem("token");
 
 const initialState = {
   products: [],
@@ -142,9 +143,14 @@ export const fetchAsyncProductSingle = createAsyncThunk(
 export const fetchProductByVendor = createAsyncThunk(
   "fetchProductByVendor/fetch",
   async (vendorId) => {
-    const response = await fetch(`${API_URL}/products/products/${vendorId}`);
-    const data = await response.json();
-    return data;
+    const response = await axios.get(`${API_URL}/products/products/${vendorId}`, {
+      headers: {
+        authorization: `${Authorization}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    return response.data;
   }
 );
 // share product
